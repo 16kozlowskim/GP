@@ -5,7 +5,7 @@ public class MyRobot extends Robot {
 
 	public void run() {
 		while(true) {
-			ahead(100);
+			
 		}
 	}
 
