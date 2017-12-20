@@ -34,11 +34,6 @@ public class ExpressionNode {
   private ExpressionNode[] children;
   private String expression;
 
-  public ExpressionNode(int depth, int arity) {
-    this.depth = depth;
-    this.arity = arity;
-  }
-
   public ExpressionNode(depth) {
     this.depth = depth;
   }
