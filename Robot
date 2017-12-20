@@ -1,25 +1,33 @@
 public class Robot {
 
-  private static final int genFunctNum = 5;
+  protected static final int genFunctNum = 5;
 
-  private ExpressionNode[] geneticTree;
-  private int generation;
-  private String name;
-  private int ID;
+  protected Random rng = new Random();
 
-  public Robot(int ID) {
+  protected ExpressionNode[] geneticTree;
+  protected int generation;
+  protected String name;
+  protected int ID;
+
+  public Robot(int ID, int generation) {
     geneticTree = new ExpressionNode[genFunctNum];
-    for (int i = 0; i < genFunctNum; i++) {
-      geneticTree[i] = new ExpressionNode(0);
-      geneticTree[i].evolve();
-    }
-    generation = 0;
+    this.generation = generation;
     this.ID = ID;
     name = "Robot_ID" + ID + "_Gen" + generation;
   }
 
-  public Robot crossover(Robot robot2, int ID) {
+  public void initialize() {
+    for (int i = 0; i < genFunctNum; i++) {
+      geneticTree[i] = new ExpressionNode(0);
+      geneticTree[i].evolve();
+    }
+  }
 
+  public Robot crossOver(Robot robot, int ID) {
+    Robot child = new Robot(ID, generation + 1);
+    for (int i = 0; i < geneticTree.length; i++) {
+      child.geneticTree[i] = geneticTree[i].cross(robot.geneticTree[i]);
+    }
   }
 
   public Robot mutate() {
