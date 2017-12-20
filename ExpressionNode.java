@@ -90,6 +90,14 @@ public class ExpressionNode {
     }
   }
 
+  public int getNodeCount() {
+    int nodeCount = 1;
+    for (int i = 0; i < arity; i++) {
+      nodeCount += children[i].getNodeCount()
+    }
+    return nodeCount;
+  }
+
   private static final String[] onScannedRobotTerminals = {
     "e.getBearing()", // in double degrees (-180 <= getBearing() < 180)
     "e.getDistance()", // in double pixels

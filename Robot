@@ -4,6 +4,7 @@ public class Robot {
 
   private ExpressionNode[] geneticTree;
   private int generation;
+  private String name;
   private int ID;
 
   public Robot(int ID) {
@@ -14,14 +15,41 @@ public class Robot {
     }
     generation = 0;
     this.ID = ID;
+    name = "Robot_ID" + ID + "_Gen" + generation;
+  }
+
+  public Robot crossover(Robot robot2, int ID) {
+
+  }
+
+  public Robot mutate() {
+
   }
 
   public void createSourceCode() {
     String[] geneticSource = new String[genFunctNum];
     for (int i = 0; i < genFunctNum; i++) {
       geneticSource[i] = geneticTree[i].compose();
-
     }
+    String sourceCode =
+      "package u1624396;" +
+      "\nimport robocode.*;" +
+      "\npublic class " + name + " extends Robot {" +
+      "\n  public void run() {" +
+      "\n    while(true) {" +
+      "\n      turnLeft(Double.POSITIVE_INFINITY);" +
+      "\n      turnRadarLeft(Double.POSITIVE_INFINITY);" +
+      "\n      turnGunLeft(Double.POSITIVE_INFINITY);" +
+      "\n    }" +
+      "\n  }" +
+      "\n  public void onScannedRobot(ScannedRobotEvent e) {" +
+      "\n    ahead(" + geneticSource[0] + ")" +
+      "\n    turnRadarLeft(" + geneticSource[1] + ")" +
+      "\n    turnLeft(" + geneticSource[2] + ")" +
+      "\n    turnGunLeft(" + geneticSource[3] + ")" +
+      "\n    fire(" + geneticSource[4] + ")" +
+      "\n  }" +
+      "\n}";
   }
 
 }

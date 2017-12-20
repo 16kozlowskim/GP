@@ -5,7 +5,9 @@ public class MyRobot extends Robot {
 
 	public void run() {
 		while(true) {
-			
+			turnLeft(); // double degrees
+			turnRadarLeft(); // double degrees
+			turnGunLeft(); // double degrees
 		}
 	}
 
