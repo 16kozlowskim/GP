@@ -1,15 +1,12 @@
 
 public class ExpressionNode {
 
-  private ExpressionNode[] children;
-  private String expression;
-
   private static final double
-    eventTermProb = 0.5,
+    scanTermProb = 0.5,
     constTermProb = 0.05,
     genTermProb = 0.45,
     termProb[] = {
-      eventTermProb,
+      scanTermProb,
       constTermProb,
       genTermProb
     },
@@ -23,15 +20,27 @@ public class ExpressionNode {
       binaryFuncProb,
       ternaryFuncProb,
       quaternaryFuncProb
-    };
+    },
+
+    terminalProb = 0.3,
+    functionProb = 0.7;
 
   private int depth, arity;
-  private int maxDepth = 6;
-  private int minDepth = 3;
+  private static final int maxDepth = 6;
+  private static final int minDepth = 3;
+
+  private Random rng = new Random();
+
+  private ExpressionNode[] children;
+  private String expression;
 
   public ExpressionNode(int depth, int arity) {
     this.depth = depth;
     this.arity = arity;
+  }
+
+  public ExpressionNode(depth) {
+    this.depth = depth;
   }
 
   public String compose() {
@@ -46,8 +55,44 @@ public class ExpressionNode {
     return composed;
   }
 
-  public void grow(int depth, int arity) {
+  public void grow() {
+    setArity();
+    assignExpression();
+  }
 
+  public void setArity() {
+    double randno = rng.nextDouble();
+    if (minDepth > depth || (rng.nextDouble() < functionProb && depth < maxDepth)) {
+      for (int i = 0; i < funcProb.length; i++) {
+        randno -= funcProb[i];
+        if (randno <= 0) {
+          arity = i + 1;
+          break;
+        }
+      }
+    } else {
+        arity = 0;
+    }
+    children = new ExpressionNode[arity];
+  }
+
+  public void assignExpression() {
+    double randno  = rng.nextDouble();
+    if (arity == 0) {
+      for (int i = 0; i < termProb; i++) {
+        randno -= termProb[i];
+        if (randno <= 0) {
+          expression = functionTerminalSet[0][i][rng.nextInt(functionTerminalSet[0][i].length)];
+          break;
+        }
+      }
+    } else {
+      expression = functionTerminalSet[arity][rng.nextInt(functionTerminalSet[arity].length)];
+      for (int i = 0; i < children.length; i++) {
+        children[i] = new ExpressionNode(depth + 1);
+        children[i].grow(depth + 1);
+      }
+    }
   }
 
   private static final String[] onScannedRobotTerminals = {
