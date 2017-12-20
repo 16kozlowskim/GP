@@ -34,11 +34,6 @@ public class ExpressionNode {
   private ExpressionNode[] children;
   private String expression;
 
-  public ExpressionNode(int depth, int arity) {
-    this.depth = depth;
-    this.arity = arity;
-  }
-
   public ExpressionNode(depth) {
     this.depth = depth;
   }
@@ -55,7 +50,7 @@ public class ExpressionNode {
     return composed;
   }
 
-  public void grow() {
+  public void evolve() {
     setArity();
     assignExpression();
   }
@@ -90,7 +85,7 @@ public class ExpressionNode {
       expression = functionTerminalSet[arity][rng.nextInt(functionTerminalSet[arity].length)];
       for (int i = 0; i < children.length; i++) {
         children[i] = new ExpressionNode(depth + 1);
-        children[i].grow(depth + 1);
+        children[i].evolve(depth + 1);
       }
     }
   }
