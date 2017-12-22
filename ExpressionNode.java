@@ -33,6 +33,8 @@ public class ExpressionNode {
 
   Random rng = new Random();
 
+  ArrayList<ExpressionNode> assembled 
+
   ExpressionNode[] children;
   String expression;
 
@@ -58,7 +60,7 @@ public class ExpressionNode {
   }
 
   public ArrayList<ExpressionNode> assemble(ExpressionNode node) {
-    ArrayList<ExpressionNode> assembled = new ArrayList<ExpressionNode>();
+    assembled = new ArrayList<ExpressionNode>();
     assembled.add(node);
     for (int i = 0; i < arity; i++) {
       assembled.addAll(children[i].assemble(children[i]));
@@ -107,13 +109,6 @@ public class ExpressionNode {
       nodeCount += children[i].getNodeCount()
     }
     return nodeCount
-  }
-
-  public void cross(ExpressionNode tree) {
-    Boolean isTerminal1 = rng.nextDouble() < prob_cross_func ? true : false;
-    Boolean isTerminal2 = rng.nextDouble() <  prob_cross_func ? true : false;
-
-
   }
 
   public ExpressionNode copy() {

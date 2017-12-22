@@ -37,7 +37,10 @@ public class Robot {
       child.tree.add(child.geneticTree[i].assemble(child.geneticTree[i]));
       robot.tree.add(robot.geneticTree[i].assemble(robot.geneticTree[i]));
 
-      
+      Boolean isTerminal1 = rng.nextDouble() < prob_cross_func ? true : false;
+      Boolean isTerminal2 = rng.nextDouble() <  prob_cross_func ? true : false;
+
+
 
     }
   }
