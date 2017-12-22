@@ -33,7 +33,7 @@ public class ExpressionNode {
 
   Random rng = new Random();
 
-  ArrayList<ExpressionNode> assembled 
+  ArrayList<ExpressionNode> assembled;
 
   ExpressionNode[] children;
   String expression;
@@ -103,14 +103,6 @@ public class ExpressionNode {
     }
   }
 
-  public int getNodeCount() {
-    int nodeCount = 1;
-    for (int i = 0; i < arity; i++) {
-      nodeCount += children[i].getNodeCount()
-    }
-    return nodeCount
-  }
-
   public ExpressionNode copy() {
     ExpressionNode copy = new ExpressionNode(depth);
     copy.arity = arity;
@@ -123,24 +115,17 @@ public class ExpressionNode {
   }
 
   public ExpressionNode getSubTree(Boolean isTerminal) {
+    ArrayList<ExpressionNode> terminals = new ArrayList<ExpressionNode>();
     if (isTerminal) {
-      getNode(rng.nextInt(nodeCount));
-    }
-  }
+      for (int i = 0; i < assembled.size(); i++) {
+        if (assembled.get(i).arity == 0) {
+          terminals.add(assembled.get(i));
+        }
+      }
+      terminals.get(rng.nextInt());
+    } else {
 
-  public ExpressionNode getNode(int nodeNum) {
-    int count = 0;
-    for (int i = 0; i < arity; i++) {
-      count == nodeNum ? return children[i] : count += children[i].getNode(nodeNum);
     }
-  }
-
-  public int deepestNode() {
-    int depth = this.depth;
-    for (int i = 0; i < arity; i++) {
-      depth = Math.max(depth, children[i].deepestNode());
-    }
-    return depth;
   }
 
   public void replace() {

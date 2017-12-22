@@ -40,6 +40,8 @@ public class Robot {
       Boolean isTerminal1 = rng.nextDouble() < prob_cross_func ? true : false;
       Boolean isTerminal2 = rng.nextDouble() <  prob_cross_func ? true : false;
 
+      child.getSubTree(isTerminal1)
+
 
 
     }
