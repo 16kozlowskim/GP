@@ -43,7 +43,7 @@ public class ExpressionNode {
   public String compose() {
     String composed = expression;
 
-    for (int i = 0; i < this.arity; i++) {
+    for (int i = 0; i < arity; i++) {
       composed = composed.replaceFirst("&"+i, children[i].compose());
     }
 
@@ -55,6 +55,15 @@ public class ExpressionNode {
   public void evolve() {
     setArity();
     assignExpression();
+  }
+
+  public ArrayList<ExpressionNode> assemble(ExpressionNode node) {
+    ArrayList<ExpressionNode> assembled = new ArrayList<ExpressionNode>();
+    assembled.add(node);
+    for (int i = 0; i < arity; i++) {
+      assembled.addAll(children[i].assemble(children[i]));
+    }
+    return assembled;
   }
 
   public void setArity() {
@@ -97,13 +106,13 @@ public class ExpressionNode {
     for (int i = 0; i < arity; i++) {
       nodeCount += children[i].getNodeCount()
     }
-    return nodeCount;
+    return nodeCount
   }
 
   public void cross(ExpressionNode tree) {
     Boolean isTerminal1 = rng.nextDouble() < prob_cross_func ? true : false;
     Boolean isTerminal2 = rng.nextDouble() <  prob_cross_func ? true : false;
-    ExpressionNode node = getSubTree(isTerminal1);
+
 
   }
 
@@ -119,17 +128,15 @@ public class ExpressionNode {
   }
 
   public ExpressionNode getSubTree(Boolean isTerminal) {
-    int nodeCount = getNodeCount();
     if (isTerminal) {
-      getNodes();
+      getNode(rng.nextInt(nodeCount));
     }
   }
 
-  public void getNodes() {
-    int count;
+  public ExpressionNode getNode(int nodeNum) {
+    int count = 0;
     for (int i = 0; i < arity; i++) {
-
-      children[i].getNode(nodeNum);
+      count == nodeNum ? return children[i] : count += children[i].getNode(nodeNum);
     }
   }
 

@@ -8,7 +8,7 @@ public class Robot {
   int generation;
   String name;
   int ID;
-  ArrayList<ArrayList<ExpressionNode>> treeNodes;
+  ArrayList<ArrayList<ExpressionNode>> tree;
 
   static final double
     prob_cross_term = 0.1,
@@ -19,23 +19,26 @@ public class Robot {
     this.generation = generation;
     this.ID = ID;
     name = "Robot_ID" + ID + "_Gen" + generation;
-    treeNodes = new ArrayList<ArrayList<ExpressionNode>>();
+    tree = new ArrayList<ArrayList<ExpressionNode>>();
   }
 
   public void initialize() {
     for (int i = 0; i < genFunctNum; i++) {
       geneticTree[i] = new ExpressionNode(0);
       geneticTree[i].evolve();
-      treeNodes.add(new ArrayList<ExpressionNode>());
-      treeNodes.get(i).add(geneticTree[i]);
     }
   }
 
   public Robot crossOver(Robot robot, int ID) {
     Robot child = new Robot(ID, generation + 1);
+
     for (int i = 0; i < geneticTree.length; i++) {
       child.geneticTree[i] = geneticTree[i].copy();
-      child.geneticTree[i].cross(robot.geneticTree[i]);
+      child.tree.add(child.geneticTree[i].assemble(child.geneticTree[i]));
+      robot.tree.add(robot.geneticTree[i].assemble(robot.geneticTree[i]));
+
+      
+
     }
   }
 
