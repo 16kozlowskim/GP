@@ -1,7 +1,7 @@
 
 public class ExpressionNode {
 
-  protected static final double
+  static final double
     scanTermProb = 0.5,
     constTermProb = 0.05,
     genTermProb = 0.45,
@@ -27,14 +27,14 @@ public class ExpressionNode {
     prob_cross_term = 0.1,
     prob_cross_func = 0.9;
 
-  protected int depth, arity;
-  protected static final int maxDepth = 6;
-  protected static final int minDepth = 3;
+  int depth, arity;
+  static final int maxDepth = 6;
+  static final int minDepth = 3;
 
-  protected Random rng = new Random();
+  Random rng = new Random();
 
-  protected ExpressionNode[] children;
-  protected String expression;
+  ExpressionNode[] children;
+  String expression;
 
   public ExpressionNode(depth) {
     this.depth = depth;
@@ -100,13 +100,11 @@ public class ExpressionNode {
     return nodeCount;
   }
 
-  public ExpressionNode cross(ExpressionNode tree) {
-    ExpressionNode child = copy();
-    if (prob_cross_func < rng.nextDouble()) {
-      child = child.replace(tree.getSubTree(false));
-    } else {
-      child = child.replace(tree.getSubTree(true));
-    }
+  public void cross(ExpressionNode tree) {
+    Boolean isTerminal1 = rng.nextDouble() < prob_cross_func ? true : false;
+    Boolean isTerminal2 = rng.nextDouble() <  prob_cross_func ? true : false;
+    ExpressionNode node = getSubTree(isTerminal1);
+
   }
 
   public ExpressionNode copy() {
@@ -122,19 +120,32 @@ public class ExpressionNode {
 
   public ExpressionNode getSubTree(Boolean isTerminal) {
     int nodeCount = getNodeCount();
-    if (!isTerminal) {
-      return getNode(rng.nextInt(nodeCount));
+    if (isTerminal) {
+      getNodes();
+    }
   }
 
-  public ExpressionNode getNode(int nodeNum) {
+  public void getNodes() {
+    int count;
+    for (int i = 0; i < arity; i++) {
+
+      children[i].getNode(nodeNum);
+    }
+  }
+
+  public int deepestNode() {
+    int depth = this.depth;
+    for (int i = 0; i < arity; i++) {
+      depth = Math.max(depth, children[i].deepestNode());
+    }
+    return depth;
+  }
+
+  public void replace() {
 
   }
 
-  replace() {
-
-  }
-
-  protected static final String[] onScannedRobotTerminals = {
+  static final String[] onScannedRobotTerminals = {
     "e.getBearing()", // in double degrees (-180 <= getBearing() < 180)
     "e.getDistance()", // in double pixels
     "e.getEnergy()", // in double
@@ -142,13 +153,13 @@ public class ExpressionNode {
     "e.getVelocity()" // in double pixels/turn
   };
 
-  protected static final String[] constantTerminals = {
+  static final String[] constantTerminals = {
     "Math.PI",
     "Math.random()",
     "0"
   };
 
-  protected static final String[] generalTerminals = {
+  static final String[] generalTerminals = {
     "getBattleFieldHeight()", // in double pixels
     "getBattleFieldWidth()", // in double pixels
     "getEnergy()", // in double
@@ -162,13 +173,13 @@ public class ExpressionNode {
     "getY()", // in double pixels
   };
 
-  protected static final String[][] terminalSet = {
+  static final String[][] terminalSet = {
     onScannedRobotTerminals,
     constantTerminals,
     generalTerminals
   };
 
-  protected static final String[] unaryFunctions = {
+  static final String[] unaryFunctions = {
     "Math.sin(&1)",
     "Math.cos(&1)",
     "Math.asin(&1)",
@@ -177,7 +188,7 @@ public class ExpressionNode {
     "-1 * &1"
   };
 
-  protected static final String[] binaryFunctions = {
+  static final String[] binaryFunctions = {
     "Math.min(&1, &2)",
     "Math.max(&1, &2)",
     "&1 + &2",
@@ -186,15 +197,15 @@ public class ExpressionNode {
     "&1 / &2"
   };
 
-  protected static final String[] ternaryFunctions = {
+  static final String[] ternaryFunctions = {
     "&1 > 0 ? &2 : &3"
   };
 
-  protected static final String[] quaternaryFunctions = {
+  static final String[] quaternaryFunctions = {
     "&1 > &2 ? &3 : &4"
   };
 
-  protected static final String[][][] functionTerminalSet = {
+  static final String[][][] functionTerminalSet = {
     terminalSet,
     unaryFunctions,
     binaryFunctions,
