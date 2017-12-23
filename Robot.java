@@ -59,16 +59,21 @@ public class Robot {
       for (j = 0; j < child.tree.get(i).size(); j++) {
         if (child.tree.get(i).get(j) == a) break;
       }
-      int depth = child.tree.get(i).get(j).depth;
+      if (j == 0) {
+        child.root[i] = replacement;
+      } else {
 
-      for (; j > 0; --j) {
-        if (child.tree.get(i).get(j).depth != depth) break;
-      }
+        int depth = child.tree.get(i).get(j).depth;
 
-      for (int n = 0; n < child.tree.get(i).get(j).arity; n++) {
-        if (child.tree.get(i).get(j).children[n] == a) {
-          child.tree.get(i).get(j).children[n] = replacement;
-          break;
+        for (; j > 0; --j) {
+          if (child.tree.get(i).get(j).depth != depth) break;
+        }
+
+        for (int n = 0; n < child.tree.get(i).get(j).arity; n++) {
+          if (child.tree.get(i).get(j).children[n] == a) {
+            child.tree.get(i).get(j).children[n] = replacement;
+            break;
+          }
         }
       }
       replacement.fixDepths(child.tree.get(i).get(j).depth - replacement.depth + 1);
@@ -84,6 +89,7 @@ public class Robot {
       child.tree.add(child.root[i].assemble(child.root[i]));
 
       Boolean isTerminal = rng.nextDouble() < mutateTermProb ? true : false;
+      System.out.println(isTerminal);
 
       ExpressionNode a = child.root[i].getSubTree(isTerminal);
 
@@ -91,17 +97,24 @@ public class Robot {
       for (j = 0; j < child.tree.get(i).size(); j++) {
         if (child.tree.get(i).get(j) == a) break;
       }
-      int depth = child.tree.get(i).get(j).depth;
 
-      for (; j > 0; --j) {
-        if (child.tree.get(i).get(j).depth != depth) break;
-      }
+      if (j == 0) {
+        child.root[i] = new ExpressionNode(0);
+        child.root[i].evolve(0);
+      } else {
 
-      for (int n = 0; n < child.tree.get(i).get(j).arity; n++) {
-        if (child.tree.get(i).get(j).children[n] == a) {
-          child.tree.get(i).get(j).children[n] = new ExpressionNode(child.tree.get(i).get(j).depth + 1);
-          child.tree.get(i).get(j).children[n].evolve(child.tree.get(i).get(j).depth + 1);
-          break;
+        int depth = child.tree.get(i).get(j).depth;
+
+        for (; j > 0; --j) {
+          if (child.tree.get(i).get(j).depth != depth) break;
+        }
+
+        for (int n = 0; n < child.tree.get(i).get(j).arity; n++) {
+          if (child.tree.get(i).get(j).children[n] == a) {
+            child.tree.get(i).get(j).children[n] = new ExpressionNode(child.tree.get(i).get(j).depth + 1);
+            child.tree.get(i).get(j).children[n].evolve(child.tree.get(i).get(j).depth + 1);
+            break;
+          }
         }
       }
     }

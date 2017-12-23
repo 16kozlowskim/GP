@@ -118,12 +118,14 @@ public class ExpressionNode {
     ArrayList<ExpressionNode> nodes = new ArrayList<ExpressionNode>();
     if (isTerminal) {
       for (int i = 0; i < assembled.size(); i++) {
+        System.out.println(assembled.get(i).arity);
         if (assembled.get(i).arity == 0) {
           nodes.add(assembled.get(i));
         }
       }
     } else {
       for (int i = 0; i < assembled.size(); i++) {
+        System.out.println(assembled.get(i).arity);
         if (assembled.get(i).arity != 0) {
           nodes.add(assembled.get(i));
         }

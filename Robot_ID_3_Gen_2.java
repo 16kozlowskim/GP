@@ -9,10 +9,10 @@ public class Robot_ID_3_Gen_2 extends Robot {
     }
   }
   public void onScannedRobot(ScannedRobotEvent e) {
-    ahead(((e.getBearing()) * (e.getEnergy())));
-    turnRadarLeft(((getVelocity()) > 0 ? (getBattleFieldHeight()) : (getVelocity())));
-    turnLeft(((getGunHeading()) / (e.getHeading())));
-    turnGunLeft(((getRadarHeading()) * (e.getEnergy())));
-    fire(((e.getBearing()) + (getVelocity())));
+    ahead(((e.getVelocity()) > (getX()) ? (getOthers()) : (Math.PI)));
+    turnRadarLeft(((getOthers()) > ((getGunHeading()) * (getHeading())) ? (getEnergy()) : (e.getVelocity())));
+    turnLeft((Math.sin((getBattleFieldWidth()))));
+    turnGunLeft(((getEnergy()) > (e.getDistance()) ? ((e.getHeading()) > (e.getHeading()) ? (getOthers()) : (getGunHeading())) : (e.getEnergy())));
+    fire(((getVelocity()) - (getHeading())));
   }
 }
