@@ -28,8 +28,8 @@ public class ExpressionNode {
     functionProb = 0.7;
 
   int depth, arity;
-  static final int maxDepth = 5;
-  static final int minDepth = 3;
+  static final int maxDepth = 4;
+  static final int minDepth = 1;
 
   static Random rng = new Random();
 
