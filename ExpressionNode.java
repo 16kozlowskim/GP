@@ -109,27 +109,38 @@ public class ExpressionNode {
     copy.children = new ExpressionNode[arity];
     copy.expression = expression;
     for (int i = 0; i < arity; i++) {
-      copy.children[i] = children[i].clone();
+      copy.children[i] = children[i].copy();
     }
     return copy;
   }
 
   public ExpressionNode getSubTree(Boolean isTerminal) {
-    ArrayList<ExpressionNode> terminals = new ArrayList<ExpressionNode>();
+    ArrayList<ExpressionNode> nodes = new ArrayList<ExpressionNode>();
     if (isTerminal) {
       for (int i = 0; i < assembled.size(); i++) {
         if (assembled.get(i).arity == 0) {
-          terminals.add(assembled.get(i));
+          nodes.add(assembled.get(i));
         }
       }
-      terminals.get(rng.nextInt());
     } else {
-
+      for (int i = 0; i < assembled.size(); i++) {
+        if (assembled.get(i).arity != 0) {
+          nodes.add(assembled.get(i));
+        }
+      }
     }
+    return nodes.get(rng.nextInt(nodes.size()));
   }
 
-  public void replace() {
+  public int treeSize() {
+    return assembled.size();
+  }
 
+  public void fixDepths(int off) {
+    depth += off;
+    for (int i; i < arity; i++) {
+      children[i].fixDepths(off);
+    }
   }
 
   static final String[] onScannedRobotTerminals = {
