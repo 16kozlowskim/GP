@@ -28,8 +28,8 @@ public class ExpressionNode {
     functionProb = 0.7;
 
   int depth, arity;
-  static final int maxDepth = 7;
-  static final int minDepth = 3;
+  static final int maxDepth = 1;
+  static final int minDepth = 1;
 
   static Random rng = new Random();
 
@@ -44,7 +44,6 @@ public class ExpressionNode {
 
   public String compose() {
     String composed = expression;
-    System.out.println(expression);
 
     for (int i = 0; i < arity; i++) {
       composed = composed.replaceFirst("&"+(i+1), children[i].compose());
@@ -76,13 +75,11 @@ public class ExpressionNode {
         randno -= funcProb[i];
         if (randno < 0) {
           arity = i + 1;
-          System.out.println("Function chosen with arity " + arity);
           break;
         }
       }
     } else {
         arity = 0;
-        System.out.println("Terminal chosen");
     }
     children = new ExpressionNode[arity];
   }
@@ -94,13 +91,11 @@ public class ExpressionNode {
         randno -= termProb[i];
         if (randno < 0) {
           expression = functionTerminalSet[0][i][rng.nextInt(functionTerminalSet[0][i].length)];
-          System.out.println("Assigned terminal "+expression);
           break;
         }
       }
     } else {
       expression = functionTerminalSet[arity][rng.nextInt(functionTerminalSet[arity].length)][0];
-      System.out.println("Assigned function " +expression);
       for (int i = 0; i < arity; i++) {
         children[i] = new ExpressionNode(depth + 1);
         children[i].evolve(off);

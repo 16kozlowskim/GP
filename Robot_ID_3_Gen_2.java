@@ -1,6 +1,6 @@
 package u1624396;
 import robocode.*;
-public class Robot_ID_1_Gen_1 extends Robot {
+public class Robot_ID_3_Gen_2 extends Robot {
   public void run() {
     while(true) {
       turnLeft(Double.POSITIVE_INFINITY);

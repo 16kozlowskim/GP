@@ -32,7 +32,6 @@ public class Robot {
     for (int i = 0; i < genFunctNum; i++) {
       root[i] = new ExpressionNode(0);
       root[i].evolve(0);
-      System.out.println("______________________");
     }
   }
 
@@ -49,6 +48,7 @@ public class Robot {
 
       ExpressionNode a = child.root[i].getSubTree(isTerminal1);
       ExpressionNode b;
+
       do {
         b = robot.root[i].getSubTree(isTerminal2);
       } while (2*a.treeSize() + 1 < b.treeSize());
@@ -61,7 +61,7 @@ public class Robot {
       }
       int depth = child.tree.get(i).get(j).depth;
 
-      for (j -= 1; j > j-5; j--) {
+      for (; j > 0; --j) {
         if (child.tree.get(i).get(j).depth != depth) break;
       }
 
@@ -93,7 +93,7 @@ public class Robot {
       }
       int depth = child.tree.get(i).get(j).depth;
 
-      for (j -= 1; j > j-5; j--) {
+      for (; j > 0; --j) {
         if (child.tree.get(i).get(j).depth != depth) break;
       }
 
@@ -112,7 +112,6 @@ public class Robot {
     String[] geneticSource = new String[genFunctNum];
     for (int i = 0; i < genFunctNum; i++) {
       geneticSource[i] = root[i].compose();
-      System.out.println("...................");
     }
     String sourceCode =
       "package u1624396;" +
