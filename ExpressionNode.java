@@ -28,8 +28,8 @@ public class ExpressionNode {
     functionProb = 0.7;
 
   int depth, arity;
-  static final int maxDepth = 1;
-  static final int minDepth = 1;
+  static final int maxDepth = 5;
+  static final int minDepth = 3;
 
   static Random rng = new Random();
 
@@ -118,14 +118,12 @@ public class ExpressionNode {
     ArrayList<ExpressionNode> nodes = new ArrayList<ExpressionNode>();
     if (isTerminal) {
       for (int i = 0; i < assembled.size(); i++) {
-        System.out.println(assembled.get(i).arity);
         if (assembled.get(i).arity == 0) {
           nodes.add(assembled.get(i));
         }
       }
     } else {
       for (int i = 0; i < assembled.size(); i++) {
-        System.out.println(assembled.get(i).arity);
         if (assembled.get(i).arity != 0) {
           nodes.add(assembled.get(i));
         }

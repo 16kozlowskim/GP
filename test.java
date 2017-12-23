@@ -7,7 +7,7 @@ public class Test {
     robot2.initialize();
     robot2.createFile();
 
-    Robot child = robot1.mutate(3);
+    Robot child = robot1.crossOver(robot2, 3);
     child.createFile();
   }
 }

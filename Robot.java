@@ -61,12 +61,13 @@ public class Robot {
       }
       if (j == 0) {
         child.root[i] = replacement;
+        System.out.println("Crossed Root at "+i);
       } else {
 
         int depth = child.tree.get(i).get(j).depth;
 
         for (; j > 0; --j) {
-          if (child.tree.get(i).get(j).depth != depth) break;
+          if (child.tree.get(i).get(j).depth == depth - 1) break;
         }
 
         for (int n = 0; n < child.tree.get(i).get(j).arity; n++) {
@@ -75,8 +76,9 @@ public class Robot {
             break;
           }
         }
+        replacement.fixDepths(child.tree.get(i).get(j).depth - replacement.depth + 1);
       }
-      replacement.fixDepths(child.tree.get(i).get(j).depth - replacement.depth + 1);
+      replacement.fixDepths(replacement.depth);
     }
     return child;
   }
@@ -89,7 +91,6 @@ public class Robot {
       child.tree.add(child.root[i].assemble(child.root[i]));
 
       Boolean isTerminal = rng.nextDouble() < mutateTermProb ? true : false;
-      System.out.println(isTerminal);
 
       ExpressionNode a = child.root[i].getSubTree(isTerminal);
 
@@ -106,7 +107,7 @@ public class Robot {
         int depth = child.tree.get(i).get(j).depth;
 
         for (; j > 0; --j) {
-          if (child.tree.get(i).get(j).depth != depth) break;
+          if (child.tree.get(i).get(j).depth == depth - 1) break;
         }
 
         for (int n = 0; n < child.tree.get(i).get(j).arity; n++) {
@@ -138,11 +139,17 @@ public class Robot {
       "\n    }" +
       "\n  }" +
       "\n  public void onScannedRobot(ScannedRobotEvent e) {" +
+      "\n" +
       "\n    ahead(" + geneticSource[0] + ");" +
+      "\n" +
       "\n    turnRadarLeft(" + geneticSource[1] + ");" +
+      "\n" +
       "\n    turnLeft(" + geneticSource[2] + ");" +
+      "\n" +
       "\n    turnGunLeft(" + geneticSource[3] + ");" +
+      "\n" +
       "\n    fire(" + geneticSource[4] + ");" +
+      "\n" +
       "\n  }" +
       "\n}";
     return sourceCode;
