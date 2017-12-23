@@ -1,8 +1,12 @@
+import java.util.ArrayList;
+import java.util.Random;
+import java.io.FileWriter;
+
 public class Robot {
 
   static final int genFunctNum = 5;
 
-  Random rng = new Random();
+  static Random rng = new Random();
 
   ExpressionNode[] root;
   int generation;
@@ -20,7 +24,7 @@ public class Robot {
     root = new ExpressionNode[genFunctNum];
     this.generation = generation;
     this.ID = ID;
-    name = "Robot_ID" + ID + "_Gen" + generation;
+    name = "Robot_ID_" + ID + "_Gen_" + generation;
     tree = new ArrayList<ArrayList<ExpressionNode>>();
   }
 
@@ -28,6 +32,7 @@ public class Robot {
     for (int i = 0; i < genFunctNum; i++) {
       root[i] = new ExpressionNode(0);
       root[i].evolve(0);
+      System.out.println("______________________");
     }
   }
 
@@ -43,8 +48,9 @@ public class Robot {
       Boolean isTerminal2 = rng.nextDouble() < crossTermProb ? true : false;
 
       ExpressionNode a = child.root[i].getSubTree(isTerminal1);
+      ExpressionNode b;
       do {
-        ExpressionNode b = robot.root[i].getSubTree(isTerminal2);
+        b = robot.root[i].getSubTree(isTerminal2);
       } while (2*a.treeSize() + 1 < b.treeSize());
 
       ExpressionNode replacement = b.copy();
@@ -55,7 +61,7 @@ public class Robot {
       }
       int depth = child.tree.get(i).get(j).depth;
 
-      for (j-1; j > j-5; j--) {
+      for (j -= 1; j > j-5; j--) {
         if (child.tree.get(i).get(j).depth != depth) break;
       }
 
@@ -71,7 +77,7 @@ public class Robot {
   }
 
   public Robot mutate(int ID) {
-    Robot child = new Robot(ID);
+    Robot child = new Robot(ID, generation + 1);
 
     for (int i = 0; i < root.length; i++) {
       child.root[i] = root[i].copy();
@@ -87,13 +93,13 @@ public class Robot {
       }
       int depth = child.tree.get(i).get(j).depth;
 
-      for (j-1; j > j-5; j--) {
+      for (j -= 1; j > j-5; j--) {
         if (child.tree.get(i).get(j).depth != depth) break;
       }
 
       for (int n = 0; n < child.tree.get(i).get(j).arity; n++) {
         if (child.tree.get(i).get(j).children[n] == a) {
-          child.tree.get(i).get(j).children[n] = new ExpressionNode(child.tree.get(i).get(j).depth + 1)
+          child.tree.get(i).get(j).children[n] = new ExpressionNode(child.tree.get(i).get(j).depth + 1);
           child.tree.get(i).get(j).children[n].evolve(child.tree.get(i).get(j).depth + 1);
           break;
         }
@@ -102,10 +108,11 @@ public class Robot {
     return child;
   }
 
-  public void createSourceCode() {
+  public String createSourceCode() {
     String[] geneticSource = new String[genFunctNum];
     for (int i = 0; i < genFunctNum; i++) {
       geneticSource[i] = root[i].compose();
+      System.out.println("...................");
     }
     String sourceCode =
       "package u1624396;" +
@@ -119,13 +126,25 @@ public class Robot {
       "\n    }" +
       "\n  }" +
       "\n  public void onScannedRobot(ScannedRobotEvent e) {" +
-      "\n    ahead(" + geneticSource[0] + ")" +
-      "\n    turnRadarLeft(" + geneticSource[1] + ")" +
-      "\n    turnLeft(" + geneticSource[2] + ")" +
-      "\n    turnGunLeft(" + geneticSource[3] + ")" +
-      "\n    fire(" + geneticSource[4] + ")" +
+      "\n    ahead(" + geneticSource[0] + ");" +
+      "\n    turnRadarLeft(" + geneticSource[1] + ");" +
+      "\n    turnLeft(" + geneticSource[2] + ");" +
+      "\n    turnGunLeft(" + geneticSource[3] + ");" +
+      "\n    fire(" + geneticSource[4] + ");" +
       "\n  }" +
       "\n}";
+    return sourceCode;
   }
+
+  public void createFile() {
+    try {
+      FileWriter fileWriter = new FileWriter(name+".java");
+      fileWriter.write(createSourceCode());
+      fileWriter.close();
+    } catch (Exception e) {
+      System.out.println(e.getMessage());
+    }
+  }
+
 
 }

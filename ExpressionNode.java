@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+import java.util.Random;
 
 public class ExpressionNode {
 
@@ -14,7 +16,7 @@ public class ExpressionNode {
     unaryFuncProb = 0.2,
     binaryFuncProb = 0.5,
     ternaryFuncProb = 0.1,
-    quaternaryFuncProb = 0.2
+    quaternaryFuncProb = 0.2,
     funcProb[] = {
       unaryFuncProb,
       binaryFuncProb,
@@ -26,25 +28,26 @@ public class ExpressionNode {
     functionProb = 0.7;
 
   int depth, arity;
-  static final int maxDepth = 6;
+  static final int maxDepth = 7;
   static final int minDepth = 3;
 
-  Random rng = new Random();
+  static Random rng = new Random();
 
   ArrayList<ExpressionNode> assembled;
 
   ExpressionNode[] children;
   String expression;
 
-  public ExpressionNode(depth) {
+  public ExpressionNode(int depth) {
     this.depth = depth;
   }
 
   public String compose() {
     String composed = expression;
+    System.out.println(expression);
 
     for (int i = 0; i < arity; i++) {
-      composed = composed.replaceFirst("&"+i, children[i].compose());
+      composed = composed.replaceFirst("&"+(i+1), children[i].compose());
     }
 
     composed = "("+composed+")";
@@ -68,16 +71,18 @@ public class ExpressionNode {
 
   public void setArity(int off) {
     double randno = rng.nextDouble();
-    if (minDepth + off > depth || (rng.nextDouble() < functionProb && depth < maxDepth + off)) {
+    if (((minDepth + off) > depth) || ((rng.nextDouble() < functionProb) && (depth < (maxDepth + off)))) {
       for (int i = 0; i < funcProb.length; i++) {
         randno -= funcProb[i];
-        if (randno <= 0) {
+        if (randno < 0) {
           arity = i + 1;
+          System.out.println("Function chosen with arity " + arity);
           break;
         }
       }
     } else {
         arity = 0;
+        System.out.println("Terminal chosen");
     }
     children = new ExpressionNode[arity];
   }
@@ -85,16 +90,18 @@ public class ExpressionNode {
   public void assignExpression(int off) {
     double randno  = rng.nextDouble();
     if (arity == 0) {
-      for (int i = 0; i < termProb; i++) {
+      for (int i = 0; i < termProb.length; i++) {
         randno -= termProb[i];
-        if (randno <= 0) {
+        if (randno < 0) {
           expression = functionTerminalSet[0][i][rng.nextInt(functionTerminalSet[0][i].length)];
+          System.out.println("Assigned terminal "+expression);
           break;
         }
       }
     } else {
-      expression = functionTerminalSet[arity][rng.nextInt(functionTerminalSet[arity].length)];
-      for (int i = 0; i < children.length; i++) {
+      expression = functionTerminalSet[arity][rng.nextInt(functionTerminalSet[arity].length)][0];
+      System.out.println("Assigned function " +expression);
+      for (int i = 0; i < arity; i++) {
         children[i] = new ExpressionNode(depth + 1);
         children[i].evolve(off);
       }
@@ -136,7 +143,7 @@ public class ExpressionNode {
 
   public void fixDepths(int off) {
     depth += off;
-    for (int i; i < arity; i++) {
+    for (int i = 0; i < arity; i++) {
       children[i].fixDepths(off);
     }
   }
@@ -175,30 +182,32 @@ public class ExpressionNode {
     generalTerminals
   };
 
-  static final String[] unaryFunctions = {
-    "Math.sin(&1)",
-    "Math.cos(&1)",
-    "Math.asin(&1)",
-    "Math.acos(&1)",
-    "Math.abs(&1)",
-    "-1 * &1"
+  static final String[][] unaryFunctions = {
+    {"Math.sin(&1)"},
+    {"Math.cos(&1)"},
+    {"Math.asin(&1)"},
+    {"Math.acos(&1)"},
+    {"Math.abs(&1)"},
+    {"-1 * &1"},
+    {"Math.toRadians(&1)"},
+    {"Math.toDegrees(&1)"}
   };
 
-  static final String[] binaryFunctions = {
-    "Math.min(&1, &2)",
-    "Math.max(&1, &2)",
-    "&1 + &2",
-    "&1 - &2",
-    "&1 * &2",
-    "&1 / &2"
+  static final String[][] binaryFunctions = {
+    {"Math.min(&1, &2)"},
+    {"Math.max(&1, &2)"},
+    {"&1 + &2"},
+    {"&1 - &2"},
+    {"&1 * &2"},
+    {"&1 / &2"}
   };
 
-  static final String[] ternaryFunctions = {
-    "&1 > 0 ? &2 : &3"
+  static final String[][] ternaryFunctions = {
+    {"&1 > 0 ? &2 : &3"}
   };
 
-  static final String[] quaternaryFunctions = {
-    "&1 > &2 ? &3 : &4"
+  static final String[][] quaternaryFunctions = {
+    {"&1 > &2 ? &3 : &4"}
   };
 
   static final String[][][] functionTerminalSet = {
