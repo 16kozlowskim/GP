@@ -23,9 +23,7 @@ public class ExpressionNode {
     },
 
     terminalProb = 0.3,
-    functionProb = 0.7,
-    prob_cross_term = 0.1,
-    prob_cross_func = 0.9;
+    functionProb = 0.7;
 
   int depth, arity;
   static final int maxDepth = 6;
@@ -54,9 +52,9 @@ public class ExpressionNode {
     return composed;
   }
 
-  public void evolve() {
-    setArity();
-    assignExpression();
+  public void evolve(int off) {
+    setArity(off);
+    assignExpression(off);
   }
 
   public ArrayList<ExpressionNode> assemble(ExpressionNode node) {
@@ -68,9 +66,9 @@ public class ExpressionNode {
     return assembled;
   }
 
-  public void setArity() {
+  public void setArity(int off) {
     double randno = rng.nextDouble();
-    if (minDepth > depth || (rng.nextDouble() < functionProb && depth < maxDepth)) {
+    if (minDepth + off > depth || (rng.nextDouble() < functionProb && depth < maxDepth + off)) {
       for (int i = 0; i < funcProb.length; i++) {
         randno -= funcProb[i];
         if (randno <= 0) {
@@ -84,7 +82,7 @@ public class ExpressionNode {
     children = new ExpressionNode[arity];
   }
 
-  public void assignExpression() {
+  public void assignExpression(int off) {
     double randno  = rng.nextDouble();
     if (arity == 0) {
       for (int i = 0; i < termProb; i++) {
@@ -98,7 +96,7 @@ public class ExpressionNode {
       expression = functionTerminalSet[arity][rng.nextInt(functionTerminalSet[arity].length)];
       for (int i = 0; i < children.length; i++) {
         children[i] = new ExpressionNode(depth + 1);
-        children[i].evolve(depth + 1);
+        children[i].evolve(off);
       }
     }
   }
