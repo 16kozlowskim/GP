@@ -1,5 +1,6 @@
 import robocode.control.*;
 import robocode.control.events.*;
+import robocode.BattleResults;
 
 //
 // Application that demonstrates how to run two sample robots in Robocode using the
@@ -9,39 +10,34 @@ import robocode.control.events.*;
 //
 public class BattleRunner {
 
-  public static void main(String[] args) {
 
-    // Disable log messages from Robocode
-    RobocodeEngine.setLogMessagesEnabled(false);
+  RobocodeEngine engine;
+  BattleObserver battleObserver;
+  BattlefieldSpecification battlefield;
+  BattleSpecification battleSpec;
 
-    // Create the RobocodeEngine
-    //   RobocodeEngine engine = new RobocodeEngine(); // Run from current working directory
-    RobocodeEngine engine = new RobocodeEngine(new java.io.File("C:/Robocode")); // Run from C:/Robocode
-
-    // Add our own battle listener to the RobocodeEngine
-    engine.addBattleListener(new BattleObserver());
-
-    // Show the Robocode battle view
-    engine.setVisible(true);
-
-    // Setup the battle specification
-
-    int numberOfRounds = 5;
-    BattlefieldSpecification battlefield = new BattlefieldSpecification(800, 600); // 800x600
-    RobotSpecification[] selectedRobots = engine.getLocalRepository("sample.RamFire,sample.Corners");
-
-    BattleSpecification battleSpec = new BattleSpecification(numberOfRounds, battlefield, selectedRobots);
-
-    // Run our specified battle and let it run till it is over
-    engine.runBattle(battleSpec, true); // waits till the battle finishes
-
-    // Cleanup our RobocodeEngine
-    engine.close();
-
-    // Make sure that the Java VM is shut down properly
-    System.exit(0);
+  public BattleRunner() {
+      engine = new RobocodeEngine(new java.io.File("C:/Robocode"));
+      RobocodeEngine.setLogMessagesEnabled(false);
+      battleObserver = new BattleObserver();
+      engine.addBattleListener(battleObserver);
+      engine.setVisible(false);
+      battlefieldSpec = new BattlefieldSpecification();
   }
-}
+
+  public double[] createBattle(double[] robots) {
+    String[] opponents = {"sample.RamFire", "sample.Corners", "sample.Crazy"};
+
+    for (int i = 0; i < robots.length; i++) {
+      for (int j = 0; i < 3; i++) {
+        RobotSpecification selectedRobots = engine.getLocalRepository(robot+", "+opponents[j]);
+        battleSpec = new BattleSpecification(5, battlefield, selectedRobots);
+        engine.runBattle(battleSpec, true);
+      }
+    }
+
+
+  }
 
 //
 // Our private battle listener for handling the battle event we are interested in.

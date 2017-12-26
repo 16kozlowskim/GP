@@ -128,7 +128,7 @@ public class Robot {
       geneticSource[i] = root[i].compose();
     }
     String sourceCode =
-      "package u1624396;" +
+      "package EvolvingRobots;" +
       "\nimport robocode.*;" +
       "\npublic class " + name + " extends Robot {" +
       "\n  public void run() {" +
@@ -157,12 +157,13 @@ public class Robot {
 
   public void createFile() {
     try {
-      FileWriter fileWriter = new FileWriter(name+".java");
+      FileWriter fileWriter = new FileWriter("C:\\robocode\\robots\\EvolvingRobots\\" + name + ".java");
       fileWriter.write(createSourceCode());
       fileWriter.close();
     } catch (Exception e) {
       System.out.println(e.getMessage());
     }
+    Process p = Runtime.getRuntime().exec("javac -cp \"C:\\robocode\\libs\\robocode.jar;\" C:\\robocode\\robots\\EvolvingRobots\\" + name + ".java");
   }
 
 
