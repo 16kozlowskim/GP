@@ -25,34 +25,46 @@ public class BattleRunner {
       battlefieldSpec = new BattlefieldSpecification();
   }
 
-  public double[] createBattle(double[] robots) {
+  public double[] createBattle(String[] robots) {
     String[] opponents = {"sample.RamFire", "sample.Corners", "sample.Crazy"};
+    BattleResults[] results;
+    double[] fitness = new double[robots.length];
 
     for (int i = 0; i < robots.length; i++) {
+      int robotScore = 0;
+      int opponentScore = 0;
       for (int j = 0; i < 3; i++) {
-        RobotSpecification selectedRobots = engine.getLocalRepository(robot+", "+opponents[j]);
+        RobotSpecification selectedRobots = engine.getLocalRepository("EvolvingRobots." + robots[i]+", "+opponents[j]);
         battleSpec = new BattleSpecification(5, battlefield, selectedRobots);
         engine.runBattle(battleSpec, true);
+
+        results = battleObserver.getResult();
+
+        if (results[0].getTeamLeaderName().equals(robots[i])) {
+          robotScore += results[0].getScore();
+          opponentScore += results[1].getScore();
+        } else {
+          robotScore += results[1].getScore();
+          opponentScore += results[0].getScore();
+        }
       }
+      fitness[i] = robotScore / (robotScore + opponentScore);
     }
+    return fitness;
 
 
   }
 
-//
-// Our private battle listener for handling the battle event we are interested in.
-//
 class BattleObserver extends BattleAdaptor {
 
-  // Called when the battle is completed successfully with battle results
-  public void onBattleCompleted(BattleCompletedEvent e) {
-    System.out.println("-- Battle has completed --");
+  robocode.BattleResults[] result;
 
-    // Print out the sorted results with the robot names
-    System.out.println("Battle results:");
-    for (robocode.BattleResults result : e.getSortedResults()) {
-      System.out.println("  " + result.getTeamLeaderName() + ": " + result.getScore());
-    }
+  public BattleResults[] getResult() {
+    return result;
+  }
+
+  public void onBattleCompleted(BattleCompletedEvent e) {
+    result = e.getIndexedResults();
   }
 
   // Called when the game sends out an information message during the battle
