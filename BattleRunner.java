@@ -8,8 +8,8 @@ import robocode.BattleResults;
 //
 // @author Flemming N. Larsen
 //
-public class BattleRunner {
 
+public class BattleRunner {
 
   RobocodeEngine engine;
   BattleObserver battleObserver;
@@ -22,7 +22,7 @@ public class BattleRunner {
       battleObserver = new BattleObserver();
       engine.addBattleListener(battleObserver);
       engine.setVisible(false);
-      battlefieldSpec = new BattlefieldSpecification();
+      battlefield = new BattlefieldSpecification();
   }
 
   public double[] createBattle(String[] robots) {
@@ -31,10 +31,10 @@ public class BattleRunner {
     double[] fitness = new double[robots.length];
 
     for (int i = 0; i < robots.length; i++) {
-      int robotScore = 0;
-      int opponentScore = 0;
-      for (int j = 0; i < 3; i++) {
-        RobotSpecification selectedRobots = engine.getLocalRepository("EvolvingRobots." + robots[i]+", "+opponents[j]);
+      double robotScore = 0;
+      double opponentScore = 0;
+      for (int j = 0; j < 3; j++) {
+        RobotSpecification[] selectedRobots = engine.getLocalRepository(opponents[j] + ", " + robots[i]);
         battleSpec = new BattleSpecification(5, battlefield, selectedRobots);
         engine.runBattle(battleSpec, true);
 
@@ -48,12 +48,13 @@ public class BattleRunner {
           opponentScore += results[0].getScore();
         }
       }
-      fitness[i] = robotScore / (robotScore + opponentScore);
+      fitness[i] = (robotScore / (robotScore + opponentScore)) + 0.01;
     }
     return fitness;
 
 
   }
+}
 
 class BattleObserver extends BattleAdaptor {
 
@@ -76,5 +77,4 @@ class BattleObserver extends BattleAdaptor {
   public void onBattleError(BattleErrorEvent e) {
     System.out.println("Err> " + e.getError());
   }
-
 }

@@ -15,6 +15,8 @@ public class Robot {
   ArrayList<ArrayList<ExpressionNode>> tree;
   Robot child;
 
+  static final String pckg = "evolving";
+
   static final double
     crossTermProb = 0.1,
     crossFuncProb = 0.9,
@@ -29,6 +31,11 @@ public class Robot {
     this.ID = ID;
     name = "Robot_ID_" + ID + "_Gen_" + generation;
     tree = new ArrayList<ArrayList<ExpressionNode>>();
+  }
+
+  public void update() {
+    generation++;
+    name = "Robot_ID_" + ID + "_Gen_" + generation;
   }
 
   public void initialize() {
@@ -47,7 +54,7 @@ public class Robot {
       else
         mutate(i);
     }
-    
+
     return child;
   }
 
@@ -136,7 +143,7 @@ public class Robot {
       geneticSource[i] = root[i].compose();
     }
     String sourceCode =
-      "package EvolvingRobots;" +
+      "package " + pckg + ";" +
       "\nimport robocode.*;" +
       "\npublic class " + name + " extends Robot {" +
       "\n  public void run() {" +
@@ -165,13 +172,13 @@ public class Robot {
 
   public void createFile() {
     try {
-      FileWriter fileWriter = new FileWriter("C:\\robocode\\robots\\EvolvingRobots\\" + name + ".java");
+      FileWriter fileWriter = new FileWriter("C:\\robocode\\robots\\evolving\\" + name + ".java");
       fileWriter.write(createSourceCode());
       fileWriter.close();
+      Process p = Runtime.getRuntime().exec("javac -cp \"C:\\robocode\\libs\\robocode.jar;\" C:\\robocode\\robots\\evolving\\" + name + ".java");
     } catch (Exception e) {
       System.out.println(e.getMessage());
     }
-    Process p = Runtime.getRuntime().exec("javac -cp \"C:\\robocode\\libs\\robocode.jar;\" C:\\robocode\\robots\\EvolvingRobots\\" + name + ".java");
   }
 
 
