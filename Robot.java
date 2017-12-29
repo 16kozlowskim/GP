@@ -148,15 +148,15 @@ public class Robot {
       "\n  }" +
       "\n  public void onScannedRobot(ScannedRobotEvent e) {" +
       "\n" +
-      "\n    ahead(" + geneticSource[0] + ");" +
+      "\n    fire(" + geneticSource[0] + ");" +
       "\n" +
       "\n    turnRadarLeft(" + geneticSource[1] + ");" +
       "\n" +
       "\n    turnLeft(" + geneticSource[2] + ");" +
-      "\n" +
+      "\n" + 
       "\n    turnGunLeft(" + geneticSource[3] + ");" +
       "\n" +
-      "\n    fire(" + geneticSource[4] + ");" +
+      "\n    ahead(" + geneticSource[4] + ");" +
       "\n" +
       "\n  }" +
       "\n}";
