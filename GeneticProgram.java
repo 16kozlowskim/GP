@@ -37,7 +37,7 @@ public class GeneticProgram {
       }
       fitnesses = battle.createBattle(robotNames);
 
-      //extractTop();
+      extractTop();
 
       for (int i = 0; i < popSize; i++) {
         int index1 = tournamentSelect();
@@ -51,6 +51,19 @@ public class GeneticProgram {
   }
 
   public static void extractTop() {
+    double fitness = 0;
+    int index = 0;
+
+    for (int i = 0; i < popSize; i++) {
+      if (fitness < fitnesses[i]) {
+        fitness = fitnesses[i];
+        index = i;
+      }
+    }
+    System.out.println(parent[index].name);
+  }
+
+  /*public static void extractTop() {
     double fitness = 0;
     double fitness2 = 0;
 
@@ -67,7 +80,7 @@ public class GeneticProgram {
 
     child[0].update();
     child[1].update();
-  }
+  }*/
 
   public static int tournamentSelect() {
     double fitness = 0;

@@ -143,7 +143,7 @@ public class Robot {
       "\npublic class " + name + " extends Robot {" +
       "\n  public void run() {" +
       "\n    while(true) {" +
-      "\n      turnLeft(Double.POSITIVE_INFINITY);" +
+      "\n      turnGunLeft(Double.POSITIVE_INFINITY);" +
       "\n    }" +
       "\n  }" +
       "\n  public void onScannedRobot(ScannedRobotEvent e) {" +

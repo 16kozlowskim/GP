@@ -26,7 +26,7 @@ public class BattleRunner {
   }
 
   public double[] createBattle(String[] robots) {
-    String[] opponents = {"sample.RamFire", "sample.Corners", "sample.Crazy", "sample.SpinBot", "sample.SittingDuck"};
+    String[] opponents = {"supersample.SuperCrazy*", "supersample.SuperSittingDuck*"};
     BattleResults[] results;
     double[] fitness = new double[robots.length];
 

@@ -193,7 +193,7 @@ public class ExpressionNode {
   static final String[] constantTerminals = {
     "Math.PI",
     "Math.random()",
-    "0"
+    "0.001"
   };
 
   static final String[] generalTerminals = {
