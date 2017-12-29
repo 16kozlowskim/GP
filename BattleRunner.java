@@ -26,14 +26,14 @@ public class BattleRunner {
   }
 
   public double[] createBattle(String[] robots) {
-    String[] opponents = {"sample.RamFire", "sample.Corners", "sample.Crazy"};
+    String[] opponents = {"sample.RamFire", "sample.Corners", "sample.Crazy", "sample.SpinBot", "sample.SittingDuck"};
     BattleResults[] results;
     double[] fitness = new double[robots.length];
 
     for (int i = 0; i < robots.length; i++) {
       double robotScore = 0;
       double opponentScore = 0;
-      for (int j = 0; j < 3; j++) {
+      for (int j = 0; j < opponents.length; j++) {
         RobotSpecification[] selectedRobots = engine.getLocalRepository(opponents[j] + ", " + robots[i]);
         battleSpec = new BattleSpecification(5, battlefield, selectedRobots);
         engine.runBattle(battleSpec, true);
@@ -70,7 +70,7 @@ class BattleObserver extends BattleAdaptor {
 
   // Called when the game sends out an information message during the battle
   public void onBattleMessage(BattleMessageEvent e) {
-    System.out.println("Msg> " + e.getMessage());
+    //System.out.println("Msg> " + e.getMessage());
   }
 
   // Called when the game sends out an error message during the battle

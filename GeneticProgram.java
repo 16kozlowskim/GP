@@ -36,13 +36,10 @@ public class GeneticProgram {
         robotNames[i] = "evolving." + parent[i].name + "*";
       }
       fitnesses = battle.createBattle(robotNames);
-      for (int j = 0; j < fitnesses.length; j++) {
-        System.out.println(fitnesses[j]);
-      }
 
-      extractTop();
+      //extractTop();
 
-      for (int i = 2 ; i < popSize; i++) {
+      for (int i = 0; i < popSize; i++) {
         int index1 = tournamentSelect();
         int index2 = tournamentSelect();
         child[i] = parent[index1].geneticOp(parent[index2], i + 1);
@@ -56,27 +53,20 @@ public class GeneticProgram {
   public static void extractTop() {
     double fitness = 0;
     double fitness2 = 0;
-    int index;
+
     for (int i = 0; i < popSize; i++) {
-      index = rng.nextInt(popSize);
-      if (fitness < fitnesses[index]) {
-        fitness = fitnesses[index];
-        child[0] = parent[index];
+      if (fitness < fitnesses[i]) {
+        fitness = fitnesses[i];
+        child[0] = parent[i];
       }
-      else if (fitness2 < fitnesses[index]) {
-        fitness2 = fitnesses[index];
-        child[1] = parent[index];
+      else if (fitness2 < fitnesses[i]) {
+        fitness2 = fitnesses[i];
+        child[1] = parent[i];
       }
     }
-    if (child[0] == null)
-      child[0] = parent[rng.nextInt(popSize)];
-    else
-      child[0].update();
 
-    if (child[1] == null)
-      child[1] = parent[rng.nextInt(popSize)];
-    else
-      child[1].update();
+    child[0].update();
+    child[1].update();
   }
 
   public static int tournamentSelect() {

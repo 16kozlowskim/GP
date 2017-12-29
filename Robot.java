@@ -68,11 +68,7 @@ public class Robot {
     Boolean isTerminal2 = rng.nextDouble() < crossTermProb ? true : false;
 
     ExpressionNode a = child.root[i].getSubTree(isTerminal1);
-    ExpressionNode b;
-
-    do {
-      b = robot.root[i].getSubTree(isTerminal2);
-    } while (2*a.treeSize() + 1 < b.treeSize());
+    ExpressionNode b = robot.root[i].getSubTree(isTerminal2, a.treeSize());
 
     ExpressionNode replacement = b.copy();
 
@@ -82,7 +78,6 @@ public class Robot {
     }
     if (j == 0) {
       child.root[i] = replacement;
-      System.out.println("Crossed Root at "+i);
     } else {
 
       int depth = child.tree.get(i).get(j).depth;
@@ -149,8 +144,6 @@ public class Robot {
       "\n  public void run() {" +
       "\n    while(true) {" +
       "\n      turnLeft(Double.POSITIVE_INFINITY);" +
-      "\n      turnRadarLeft(Double.POSITIVE_INFINITY);" +
-      "\n      turnGunLeft(Double.POSITIVE_INFINITY);" +
       "\n    }" +
       "\n  }" +
       "\n  public void onScannedRobot(ScannedRobotEvent e) {" +
@@ -176,6 +169,7 @@ public class Robot {
       fileWriter.write(createSourceCode());
       fileWriter.close();
       Process p = Runtime.getRuntime().exec("javac -cp \"C:\\robocode\\libs\\robocode.jar;\" C:\\robocode\\robots\\evolving\\" + name + ".java");
+      p.waitFor();
     } catch (Exception e) {
       System.out.println(e.getMessage());
     }

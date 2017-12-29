@@ -28,8 +28,8 @@ public class ExpressionNode {
     functionProb = 0.7;
 
   int depth, arity;
-  static final int maxDepth = 4;
-  static final int minDepth = 1;
+  static final int maxDepth = 5;
+  static final int minDepth = 2;
 
   static Random rng = new Random();
 
@@ -115,6 +115,7 @@ public class ExpressionNode {
   }
 
   public ExpressionNode getSubTree(Boolean isTerminal) {
+    if ((treeSize() == 1) && !isTerminal) return getSubTree(true);
     ArrayList<ExpressionNode> nodes = new ArrayList<ExpressionNode>();
     if (isTerminal) {
       for (int i = 0; i < assembled.size(); i++) {
@@ -124,12 +125,44 @@ public class ExpressionNode {
       }
     } else {
       for (int i = 0; i < assembled.size(); i++) {
-        if (assembled.get(i).arity != 0) {
+        if (assembled.get(i).arity > 0) {
           nodes.add(assembled.get(i));
         }
       }
     }
-    return nodes.get(rng.nextInt(nodes.size()));
+    ExpressionNode a = null;
+    try {
+      a = nodes.get(rng.nextInt(nodes.size()));
+    } catch (Exception e) {
+      System.out.println("size: " + nodes.size());
+    }
+    return a;
+  }
+
+  public ExpressionNode getSubTree(Boolean isTerminal, int treeSize) {
+    if ((treeSize() == 1) && !isTerminal) return getSubTree(true, treeSize);
+    int maxSize = (2 * treeSize) + 1;
+    ArrayList<ExpressionNode> nodes = new ArrayList<ExpressionNode>();
+    if (isTerminal) {
+      for (int i = 0; i < assembled.size(); i++) {
+        if (assembled.get(i).arity == 0) {
+          nodes.add(assembled.get(i));
+        }
+      }
+    } else {
+      for (int i = 0; i < assembled.size(); i++) {
+        if ((assembled.get(i).arity > 0) && (assembled.get(i).treeSize() < maxSize)) {
+          nodes.add(assembled.get(i));
+        }
+      }
+    }
+    ExpressionNode a = null;
+    try {
+      a = nodes.get(rng.nextInt(nodes.size()));
+    } catch (Exception e) {
+      System.out.println("size2: " + nodes.size());
+    }
+    return a;
   }
 
   public int treeSize() {
