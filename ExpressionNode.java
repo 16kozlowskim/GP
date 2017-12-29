@@ -130,6 +130,8 @@ public class ExpressionNode {
         }
       }
     }
+    if (nodes.size() == 0) return getSubTree(true);
+
     ExpressionNode a = null;
     try {
       a = nodes.get(rng.nextInt(nodes.size()));
@@ -151,16 +153,20 @@ public class ExpressionNode {
       }
     } else {
       for (int i = 0; i < assembled.size(); i++) {
-        if ((assembled.get(i).arity > 0) && (assembled.get(i).treeSize() < maxSize)) {
+        if ((assembled.get(i).arity > 0) && (assembled.get(i).treeSize() <= maxSize)) {
           nodes.add(assembled.get(i));
         }
       }
     }
+    if (nodes.size() == 0) return getSubTree(true);
+
     ExpressionNode a = null;
     try {
       a = nodes.get(rng.nextInt(nodes.size()));
     } catch (Exception e) {
       System.out.println("size2: " + nodes.size());
+      System.out.println(assembled.size());
+      System.out.println(isTerminal);
     }
     return a;
   }
