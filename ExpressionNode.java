@@ -4,13 +4,37 @@ import java.util.Random;
 public class ExpressionNode {
 
   static final double
-    scanTermProb = 0.5,
+    scanRobotTermProb = 0.5,
     constTermProb = 0.05,
     genTermProb = 0.45,
     termProb[] = {
-      scanTermProb,
+      scanRobotTermProb,
       constTermProb,
       genTermProb
+    },
+
+    hitWallTermProb = 0.35,
+    constTermProb2 = 0.1,
+    genTermProb2 = 0.55,
+    termProb2[] = {
+      hitWallTermProb,
+      constTermProb2,
+      genTermProb2
+    },
+
+    hitRobotTermProb = 0.4,
+    constTermProb3 = 0.05,
+    genTermProb3 = 0.55,
+    termProb3[] = {
+      hitRobotTermProb,
+      constTermProb3,
+      genTermProb3
+    },
+
+    eventTermProb[][] = {
+      termProb,
+      termProb2,
+      termProb3
     },
 
     unaryFuncProb = 0.2,
@@ -54,9 +78,26 @@ public class ExpressionNode {
     return composed;
   }
 
-  public void evolve(int off) {
+  public void evolve(int off, int i) {
     setArity(off);
-    assignExpression(off);
+    int index = -1;
+    switch (i) {
+      case 0:
+      case 1:
+      case 2:
+      case 3:
+      case 4:
+        index = 0;
+        break;
+      case 5:
+      case 6:
+        index = 1;
+        break;
+      case 7:
+      case 8:
+        index = 2;
+    }
+    assignExpression(off, index);
   }
 
   public ArrayList<ExpressionNode> assemble(ExpressionNode node) {
@@ -84,11 +125,12 @@ public class ExpressionNode {
     children = new ExpressionNode[arity];
   }
 
-  public void assignExpression(int off) {
+  public void assignExpression(int off, int index) {
+
     double randno  = rng.nextDouble();
     if (arity == 0) {
       for (int i = 0; i < termProb.length; i++) {
-        randno -= termProb[i];
+        randno -= eventTermProb[index][i];
         if (randno < 0) {
           expression = functionTerminalSet[0][i][rng.nextInt(functionTerminalSet[0][i].length)];
           break;
@@ -190,10 +232,21 @@ public class ExpressionNode {
     "e.getVelocity()" // in double pixels/turn
   };
 
+  static final String[] onHitWallTerminals = {
+    "e.getBearing()",
+    "e.getBearingRadians()"
+  };
+
+  static final String[] onHitRobotTerminals = {
+    "e.getBearing()",
+    "e.getBearingRadians()",
+    "e.getEnergy"
+  }
+
   static final String[] constantTerminals = {
     "Math.PI",
     "Math.random()",
-    "0.001"
+    "0.01"
   };
 
   static final String[] generalTerminals = {

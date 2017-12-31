@@ -60,7 +60,7 @@ public class GeneticProgram {
         index = i;
       }
     }
-    System.out.println(parent[index].name);
+    System.out.println(parent[index].name + ", " + fitnesses[index]);
   }
 
   /*public static void extractTop() {

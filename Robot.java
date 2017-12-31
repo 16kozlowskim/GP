@@ -41,7 +41,7 @@ public class Robot {
   public void initialize() {
     for (int i = 0; i < genFunctNum; i++) {
       root[i] = new ExpressionNode(0);
-      root[i].evolve(0);
+      root[i].evolve(0, i);
     }
   }
 
@@ -113,7 +113,7 @@ public class Robot {
 
     if (j == 0) {
       child.root[i] = new ExpressionNode(0);
-      child.root[i].evolve(0);
+      child.root[i].evolve(0, i);
     } else {
 
       int depth = child.tree.get(i).get(j).depth;
@@ -125,7 +125,7 @@ public class Robot {
       for (int n = 0; n < child.tree.get(i).get(j).arity; n++) {
         if (child.tree.get(i).get(j).children[n] == a) {
           child.tree.get(i).get(j).children[n] = new ExpressionNode(child.tree.get(i).get(j).depth + 1);
-          child.tree.get(i).get(j).children[n].evolve(child.tree.get(i).get(j).depth + 1);
+          child.tree.get(i).get(j).children[n].evolve(child.tree.get(i).get(j).depth + 1, i);
           break;
         }
       }
@@ -146,19 +146,36 @@ public class Robot {
       "\n      turnGunLeft(Double.POSITIVE_INFINITY);" +
       "\n    }" +
       "\n  }" +
+      "\n" +
       "\n  public void onScannedRobot(ScannedRobotEvent e) {" +
       "\n" +
-      "\n    fire(" + geneticSource[0] + ");" +
+      "\n    turnGunLeft(" + geneticSource[0] + ");" +
       "\n" +
-      "\n    turnRadarLeft(" + geneticSource[1] + ");" +
+      "\n    fire(" + geneticSource[1] + ");" +
       "\n" +
-      "\n    turnLeft(" + geneticSource[2] + ");" +
-      "\n" + 
-      "\n    turnGunLeft(" + geneticSource[3] + ");" +
+      "\n    ahead(" + geneticSource[2] + ");" +
       "\n" +
-      "\n    ahead(" + geneticSource[4] + ");" +
+      "\n    turnRadarLeft(" + geneticSource[3] + ");" +
+      "\n" +
+      "\n    turnLeft(" + geneticSource[4] + ");" +
       "\n" +
       "\n  }" +
+      "\n" +
+      "\n  public void onHitWall(HitWallEvent e) {" +
+      "\n" +
+      "\n    turnLeft(" + geneticSource[5] + ");" +
+      "\n" +
+      "\n    ahead(" + geneticSource[6] + ");" +
+      "\n" +
+      "\n  }" +
+      "\n" +
+      "\n  public void onHitRobot(HitRobotEvent e) {" +
+      "\n" +
+      "\n    turnLeft(" + geneticSource[7] + ");" +
+      "\n" +
+      "\n    ahead(" + geneticSource[8] + ");" +
+      "\n" +
+      "\n  }"
       "\n}";
     return sourceCode;
   }
