@@ -4,7 +4,7 @@ import java.io.FileWriter;
 
 public class Robot {
 
-  static final int genFunctNum = 5;
+  static final int genFunctNum = 9;
 
   static Random rng = new Random();
 
@@ -33,9 +33,12 @@ public class Robot {
     tree = new ArrayList<ArrayList<ExpressionNode>>();
   }
 
-  public void update() {
-    generation++;
-    name = "Robot_ID_" + ID + "_Gen_" + generation;
+  public Robot clone(int ID) {
+    Robot clone = new Robot(ID, this.generation + 1);
+    for (int i = 0; i < genFunctNum; i++) {
+      clone.root[i] = this.root[i].copy();
+    }
+    return clone;
   }
 
   public void initialize() {
@@ -175,7 +178,7 @@ public class Robot {
       "\n" +
       "\n    ahead(" + geneticSource[8] + ");" +
       "\n" +
-      "\n  }"
+      "\n  }" +
       "\n}";
     return sourceCode;
   }

@@ -39,7 +39,7 @@ public class GeneticProgram {
 
       extractTop();
 
-      for (int i = 0; i < popSize; i++) {
+      for (int i = 2; i < popSize; i++) {
         int index1 = tournamentSelect();
         int index2 = tournamentSelect();
         child[i] = parent[index1].geneticOp(parent[index2], i + 1);
@@ -52,35 +52,24 @@ public class GeneticProgram {
 
   public static void extractTop() {
     double fitness = 0;
-    int index = 0;
-
-    for (int i = 0; i < popSize; i++) {
-      if (fitness < fitnesses[i]) {
-        fitness = fitnesses[i];
-        index = i;
-      }
-    }
-    System.out.println(parent[index].name + ", " + fitnesses[index]);
-  }
-
-  /*public static void extractTop() {
-    double fitness = 0;
     double fitness2 = 0;
+    int index1 = 0;
+    int index2 = 0;
 
     for (int i = 0; i < popSize; i++) {
       if (fitness < fitnesses[i]) {
         fitness = fitnesses[i];
-        child[0] = parent[i];
-      }
-      else if (fitness2 < fitnesses[i]) {
+        index1 = i;
+      } else if (fitness2 < fitnesses[i]) {
         fitness2 = fitnesses[i];
-        child[1] = parent[i];
+        index2 = i;
       }
     }
+    child[0] = parent[index1].clone(1);
+    child[1] = parent[index2].clone(2);
 
-    child[0].update();
-    child[1].update();
-  }*/
+    System.out.println(parent[index1].name + ", " + fitnesses[index1]);
+  }
 
   public static int tournamentSelect() {
     double fitness = 0;

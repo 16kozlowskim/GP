@@ -80,24 +80,7 @@ public class ExpressionNode {
 
   public void evolve(int off, int i) {
     setArity(off);
-    int index = -1;
-    switch (i) {
-      case 0:
-      case 1:
-      case 2:
-      case 3:
-      case 4:
-        index = 0;
-        break;
-      case 5:
-      case 6:
-        index = 1;
-        break;
-      case 7:
-      case 8:
-        index = 2;
-    }
-    assignExpression(off, index);
+    assignExpression(off, i);
   }
 
   public ArrayList<ExpressionNode> assemble(ExpressionNode node) {
@@ -125,13 +108,33 @@ public class ExpressionNode {
     children = new ExpressionNode[arity];
   }
 
-  public void assignExpression(int off, int index) {
+  public void assignExpression(int off, int j) {
+
+    int index = -1;
+    switch (j) {
+      case 0:
+      case 1:
+      case 2:
+      case 3:
+      case 4:
+        index = 0;
+        break;
+      case 5:
+      case 6:
+        index = 1;
+        break;
+      case 7:
+      case 8:
+        index = 2;
+    }
 
     double randno  = rng.nextDouble();
     if (arity == 0) {
       for (int i = 0; i < termProb.length; i++) {
         randno -= eventTermProb[index][i];
         if (randno < 0) {
+          if (i == 0) i = index;
+          else i += 2;
           expression = functionTerminalSet[0][i][rng.nextInt(functionTerminalSet[0][i].length)];
           break;
         }
@@ -140,7 +143,7 @@ public class ExpressionNode {
       expression = functionTerminalSet[arity][rng.nextInt(functionTerminalSet[arity].length)][0];
       for (int i = 0; i < arity; i++) {
         children[i] = new ExpressionNode(depth + 1);
-        children[i].evolve(off);
+        children[i].evolve(off, j);
       }
     }
   }
@@ -240,8 +243,8 @@ public class ExpressionNode {
   static final String[] onHitRobotTerminals = {
     "e.getBearing()",
     "e.getBearingRadians()",
-    "e.getEnergy"
-  }
+    "e.getEnergy()"
+  };
 
   static final String[] constantTerminals = {
     "Math.PI",
@@ -265,6 +268,8 @@ public class ExpressionNode {
 
   static final String[][] terminalSet = {
     onScannedRobotTerminals,
+    onHitWallTerminals,
+    onHitRobotTerminals,
     constantTerminals,
     generalTerminals
   };
