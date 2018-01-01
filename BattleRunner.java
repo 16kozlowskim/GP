@@ -26,7 +26,7 @@ public class BattleRunner {
   }
 
   public double[] createBattle(String[] robots) {
-    String[] opponents = {"supersample.SuperCrazy*"};
+    String[] opponents = {"voidious.Diamond 1.8.28"};
     BattleResults[] results;
     double[] fitness = new double[robots.length];
 
@@ -48,7 +48,7 @@ public class BattleRunner {
           opponentScore += results[0].getScore();
         }
       }
-      fitness[i] = (robotScore / (robotScore + opponentScore)) + 0.01;
+      fitness[i] = (robotScore / (robotScore + opponentScore)) + 0.02;
     }
     return fitness;
 
