@@ -144,6 +144,10 @@ public class Robot {
       "package " + pckg + ";" +
       "\nimport robocode.*;" +
       "\npublic class " + name + " extends Robot {" +
+      "\n" +
+      "\n  private double distanceToEnemy;" +
+      "\n  private double enemyHeading;" +
+      "\n" +
       "\n  public void run() {" +
       "\n    while(true) {" +
       "\n      turnGunLeft(Double.POSITIVE_INFINITY);" +
@@ -151,6 +155,9 @@ public class Robot {
       "\n  }" +
       "\n" +
       "\n  public void onScannedRobot(ScannedRobotEvent e) {" +
+      "\n" +
+      "\n    distanceToEnemy = e.getDistance();" +
+      "\n    enemyHeading = e.getHeading();" +
       "\n" +
       "\n    turnGunLeft(" + geneticSource[0] + ");" +
       "\n" +

@@ -237,13 +237,17 @@ public class ExpressionNode {
 
   static final String[] onHitWallTerminals = {
     "e.getBearing()",
-    "e.getBearingRadians()"
+    "e.getBearingRadians()",
+    "distanceToEnemy",
+    "enemyHeading"
   };
 
   static final String[] onHitRobotTerminals = {
     "e.getBearing()",
     "e.getBearingRadians()",
-    "e.getEnergy()"
+    "e.getEnergy()",
+    "distanceToEnemy",
+    "enemyHeading"
   };
 
   static final String[] constantTerminals = {

@@ -26,7 +26,7 @@ public class BattleRunner {
   }
 
   public double[] createBattle(String[] robots) {
-    String[] opponents = {"supersample.SuperCrazy*", "sample.Walls"};
+    String[] opponents = {"supersample.SuperCrazy*"};
     BattleResults[] results;
     double[] fitness = new double[robots.length];
 
@@ -35,7 +35,7 @@ public class BattleRunner {
       double opponentScore = 0;
       for (int j = 0; j < opponents.length; j++) {
         RobotSpecification[] selectedRobots = engine.getLocalRepository(opponents[j] + ", " + robots[i]);
-        battleSpec = new BattleSpecification(5, battlefield, selectedRobots);
+        battleSpec = new BattleSpecification(10, battlefield, selectedRobots);
         engine.runBattle(battleSpec, true);
 
         results = battleObserver.getResult();
