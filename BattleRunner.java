@@ -25,8 +25,14 @@ public class BattleRunner {
       battlefield = new BattlefieldSpecification();
   }
 
-  public double[] createBattle(String[] robots) {
-    String[] opponents = {"voidious.Diamond 1.8.28"};
+  public double[] createBattle(String[] robots, int generation) {
+
+    String[] opponents = {"supersample.SuperCrazy*", "supersample.SuperCrazy*"};
+
+    if (generation > 10) {
+      opponents[1] = "voidious.Diamond 1.8.28";
+    }
+
     BattleResults[] results;
     double[] fitness = new double[robots.length];
 
@@ -48,7 +54,7 @@ public class BattleRunner {
           opponentScore += results[0].getScore();
         }
       }
-      fitness[i] = (robotScore / (robotScore + opponentScore)) + 0.02;
+      fitness[i] = (robotScore / (robotScore + opponentScore)) + 0.01;
     }
     return fitness;
 

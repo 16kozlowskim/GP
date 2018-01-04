@@ -163,11 +163,11 @@ public class Robot {
       "\n" +
       "\n    fire(" + geneticSource[1] + ");" +
       "\n" +
-      "\n    ahead(" + geneticSource[2] + ");" +
+      "\n    turnLeft(" + geneticSource[2] + ");" +
       "\n" +
-      "\n    turnRadarLeft(" + geneticSource[3] + ");" +
+      "\n    ahead(" + geneticSource[3] + ");" +
       "\n" +
-      "\n    turnLeft(" + geneticSource[4] + ");" +
+      "\n    turnRadarLeft(" + geneticSource[4] + ");" +
       "\n" +
       "\n  }" +
       "\n" +

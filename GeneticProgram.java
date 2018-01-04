@@ -35,7 +35,7 @@ public class GeneticProgram {
         parent[i].createFile();
         robotNames[i] = "evolving." + parent[i].name + "*";
       }
-      fitnesses = battle.createBattle(robotNames);
+      fitnesses = battle.createBattle(robotNames, genCount);
 
       extractTop();
 
