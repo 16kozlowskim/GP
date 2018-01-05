@@ -13,18 +13,18 @@ public class ExpressionNode {
       genTermProb
     },
 
-    hitWallTermProb = 0.35,
+    hitWallTermProb = 0.25,
     constTermProb2 = 0.1,
-    genTermProb2 = 0.55,
+    genTermProb2 = 0.65,
     termProb2[] = {
       hitWallTermProb,
       constTermProb2,
       genTermProb2
     },
 
-    hitRobotTermProb = 0.4,
-    constTermProb3 = 0.05,
-    genTermProb3 = 0.55,
+    hitRobotTermProb = 0.25,
+    constTermProb3 = 0.1,
+    genTermProb3 = 0.65,
     termProb3[] = {
       hitRobotTermProb,
       constTermProb3,
@@ -52,8 +52,8 @@ public class ExpressionNode {
     functionProb = 0.7;
 
   int depth, arity;
-  static final int maxDepth = 5;
-  static final int minDepth = 2;
+  static final int maxDepth = 6;
+  static final int minDepth = 3;
 
   static Random rng = new Random();
 

@@ -27,11 +27,18 @@ public class BattleRunner {
 
   public double[] createBattle(String[] robots, int generation) {
 
-    String[] opponents = {"supersample.SuperCrazy*", "supersample.SuperCrazy*"};
-
-    if (generation > 10) {
-      opponents[1] = "voidious.Diamond 1.8.28";
-    }
+    String[] opponents = {
+      "supersample.SuperCrazy*",
+      "supersample.SuperBoxBot 1.0",
+      "supersample.SuperCorners 1.0",
+      "supersample.SuperMercutio 1.0",
+      "supersample.SuperRamFire 1.0",
+      "supersample.SuperSpinBot 1.0",
+      "supersample.SuperTracker 1.0",
+      "supersample.SuperTrackFire 1.0",
+      "supersample.SuperWalls 1.0",
+      "voidious.Diamond 1.8.28"
+    };
 
     BattleResults[] results;
     double[] fitness = new double[robots.length];
@@ -41,7 +48,7 @@ public class BattleRunner {
       double opponentScore = 0;
       for (int j = 0; j < opponents.length; j++) {
         RobotSpecification[] selectedRobots = engine.getLocalRepository(opponents[j] + ", " + robots[i]);
-        battleSpec = new BattleSpecification(10, battlefield, selectedRobots);
+        battleSpec = new BattleSpecification(5, battlefield, selectedRobots);
         engine.runBattle(battleSpec, true);
 
         results = battleObserver.getResult();

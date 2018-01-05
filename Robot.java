@@ -51,7 +51,7 @@ public class Robot {
   public Robot geneticOp(Robot robot, int ID) {
     child = new Robot(ID, generation + 1);
 
-    for (int i = 0; i < root.length; i++) {
+    for (int i = 0; i < genFunctNum; i++) {
       if (rng.nextDouble() < crossOverProb)
         crossOver(robot, i);
       else
