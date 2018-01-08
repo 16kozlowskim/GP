@@ -13,11 +13,11 @@ public class ExpressionNode {
       genTermProb
     },
 
-    hitWallTermProb = 0.25,
+    hitByBulletTermProb = 0.25,
     constTermProb2 = 0.1,
     genTermProb2 = 0.65,
     termProb2[] = {
-      hitWallTermProb,
+      hitByBulletTermProb,
       constTermProb2,
       genTermProb2
     },
@@ -52,8 +52,8 @@ public class ExpressionNode {
     functionProb = 0.7;
 
   int depth, arity;
-  static final int maxDepth = 6;
-  static final int minDepth = 3;
+  static final int maxDepth = 5;
+  static final int minDepth = 2;
 
   static Random rng = new Random();
 
@@ -235,9 +235,11 @@ public class ExpressionNode {
     "e.getVelocity()" // in double pixels/turn
   };
 
-  static final String[] onHitWallTerminals = {
+  static final String[] onHitByBulletTerminals = {
     "e.getBearing()",
     "e.getBearingRadians()",
+    "e.getHeading()",
+    "e.getHeadingRadians()",
     "distanceToEnemy",
     "enemyHeading"
   };
@@ -272,7 +274,7 @@ public class ExpressionNode {
 
   static final String[][] terminalSet = {
     onScannedRobotTerminals,
-    onHitWallTerminals,
+    onHitByBulletTerminals,
     onHitRobotTerminals,
     constantTerminals,
     generalTerminals

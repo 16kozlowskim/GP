@@ -4,7 +4,7 @@ import java.io.FileWriter;
 
 public class Robot {
 
-  static final int genFunctNum = 9;
+  static final int genFunctNum = 14;
 
   static Random rng = new Random();
 
@@ -14,8 +14,7 @@ public class Robot {
   int ID;
   ArrayList<ArrayList<ExpressionNode>> tree;
   Robot child;
-
-  static final String pckg = "evolving";
+  String pathToRobocode;
 
   static final double
     crossTermProb = 0.1,
@@ -25,16 +24,17 @@ public class Robot {
     mutationProb = 0.05,
     crossOverProb = 0.95;
 
-  public Robot(int ID, int generation) {
+  public Robot(int ID, int generation, String pathToRobocode) {
     root = new ExpressionNode[genFunctNum];
     this.generation = generation;
     this.ID = ID;
+    this.pathToRobocode = pathToRobocode;
     name = "Robot_ID_" + ID + "_Gen_" + generation;
     tree = new ArrayList<ArrayList<ExpressionNode>>();
   }
 
   public Robot clone(int ID) {
-    Robot clone = new Robot(ID, this.generation + 1);
+    Robot clone = new Robot(ID, this.generation + 1, this.pathToRobocode);
     for (int i = 0; i < genFunctNum; i++) {
       clone.root[i] = this.root[i].copy();
     }
@@ -44,16 +44,23 @@ public class Robot {
   public void initialize() {
     for (int i = 0; i < genFunctNum; i++) {
       root[i] = new ExpressionNode(0);
-      root[i].evolve(0, i);
+      root[i].evolve(0, i % 9);
     }
   }
 
-  public Robot geneticOp(Robot robot, int ID) {
-    child = new Robot(ID, generation + 1);
+  public Robot geneticOp(Robot robot, Robot robot2, int ID) {
+    child = new Robot(ID, generation + 1, this.pathToRobocode);
 
-    for (int i = 0; i < genFunctNum; i++) {
+    for (int i = 0; i < genFunctNum/2; i++) {
       if (rng.nextDouble() < crossOverProb)
         crossOver(robot, i);
+      else
+        mutate(i);
+    }
+
+    for (int i = genFunctNum/2; i < genFunctNum; i++) {
+      if (rng.nextDouble() < crossOverProb)
+        crossOver(robot2, i);
       else
         mutate(i);
     }
@@ -116,7 +123,7 @@ public class Robot {
 
     if (j == 0) {
       child.root[i] = new ExpressionNode(0);
-      child.root[i].evolve(0, i);
+      child.root[i].evolve(0, i % 9);
     } else {
 
       int depth = child.tree.get(i).get(j).depth;
@@ -128,7 +135,7 @@ public class Robot {
       for (int n = 0; n < child.tree.get(i).get(j).arity; n++) {
         if (child.tree.get(i).get(j).children[n] == a) {
           child.tree.get(i).get(j).children[n] = new ExpressionNode(child.tree.get(i).get(j).depth + 1);
-          child.tree.get(i).get(j).children[n].evolve(child.tree.get(i).get(j).depth + 1, i);
+          child.tree.get(i).get(j).children[n].evolve(child.tree.get(i).get(j).depth + 1, i % 9);
           break;
         }
       }
@@ -141,7 +148,7 @@ public class Robot {
       geneticSource[i] = root[i].compose();
     }
     String sourceCode =
-      "package " + pckg + ";" +
+      "package evolving;" +
       "\nimport robocode.*;" +
       "\npublic class " + name + " extends Robot {" +
       "\n" +
@@ -159,31 +166,42 @@ public class Robot {
       "\n    distanceToEnemy = e.getDistance();" +
       "\n    enemyHeading = e.getHeading();" +
       "\n" +
-      "\n    turnGunLeft(" + geneticSource[0] + ");" +
+      "\n    if (getOthers() > 1) {" +
+      "\n      turnGunLeft(" + geneticSource[0] + ");" +
       "\n" +
-      "\n    fire(" + geneticSource[1] + ");" +
+      "\n      fire(" + geneticSource[1] + ");" +
       "\n" +
-      "\n    turnLeft(" + geneticSource[2] + ");" +
+      "\n      turnLeft(" + geneticSource[2] + ");" +
       "\n" +
-      "\n    ahead(" + geneticSource[3] + ");" +
+      "\n      ahead(" + geneticSource[3] + ");" +
       "\n" +
-      "\n    turnRadarLeft(" + geneticSource[4] + ");" +
+      "\n      turnRadarLeft(" + geneticSource[4] + ");" +
+      "\n    } else {" +
+      "\n      turnGunLeft(" + geneticSource[9] + ");" +
       "\n" +
+      "\n      fire(" + geneticSource[10] + ");" +
+      "\n" +
+      "\n      turnLeft(" + geneticSource[11] + ");" +
+      "\n" +
+      "\n      ahead(" + geneticSource[12] + ");" +
+      "\n" +
+      "\n      turnRadarLeft(" + geneticSource[13] + ");" +
+      "\n    }" +
       "\n  }" +
       "\n" +
-      "\n  public void onHitWall(HitWallEvent e) {" +
+      "\n  public void onHitByBullet(HitByBulletEvent e) {" +
       "\n" +
-      "\n    turnLeft(" + geneticSource[5] + ");" +
+      "\n      turnLeft(" + geneticSource[5] + ");" +
       "\n" +
-      "\n    ahead(" + geneticSource[6] + ");" +
+      "\n      ahead(" + geneticSource[6] + ");" +
       "\n" +
       "\n  }" +
       "\n" +
       "\n  public void onHitRobot(HitRobotEvent e) {" +
       "\n" +
-      "\n    turnLeft(" + geneticSource[7] + ");" +
+      "\n      turnLeft(" + geneticSource[7] + ");" +
       "\n" +
-      "\n    ahead(" + geneticSource[8] + ");" +
+      "\n      ahead(" + geneticSource[8] + ");" +
       "\n" +
       "\n  }" +
       "\n}";
@@ -192,10 +210,10 @@ public class Robot {
 
   public void createFile() {
     try {
-      FileWriter fileWriter = new FileWriter("C:\\robocode\\robots\\evolving\\" + name + ".java");
+      FileWriter fileWriter = new FileWriter(pathToRobocode + "/robots/evolving/" + name + ".java");
       fileWriter.write(createSourceCode());
       fileWriter.close();
-      Process p = Runtime.getRuntime().exec("javac -cp \"C:\\robocode\\libs\\robocode.jar;\" C:\\robocode\\robots\\evolving\\" + name + ".java");
+      Process p = Runtime.getRuntime().exec("javac -cp " + pathToRobocode + "/libs/robocode.jar:. " + pathToRobocode + "/robots/evolving/" + name + ".java");
       p.waitFor();
     } catch (Exception e) {
       System.out.println(e.getMessage());

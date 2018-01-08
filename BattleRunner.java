@@ -16,8 +16,8 @@ public class BattleRunner {
   BattlefieldSpecification battlefield;
   BattleSpecification battleSpec;
 
-  public BattleRunner() {
-      engine = new RobocodeEngine(new java.io.File("C:/Robocode"));
+  public BattleRunner(String pathToRobocode) {
+      engine = new RobocodeEngine(new java.io.File(pathToRobocode));
       RobocodeEngine.setLogMessagesEnabled(false);
       battleObserver = new BattleObserver();
       engine.addBattleListener(battleObserver);
@@ -25,27 +25,23 @@ public class BattleRunner {
       battlefield = new BattlefieldSpecification();
   }
 
-  public double[] createBattle(String[] robots, int generation) {
+  public double[] fight(String[] robots, int generation) {
 
     String[] opponents = {
-      "supersample.SuperCrazy*",
-      "supersample.SuperBoxBot 1.0",
-      "supersample.SuperCorners 1.0",
-      "supersample.SuperMercutio 1.0",
-      "supersample.SuperRamFire 1.0",
-      "supersample.SuperSpinBot 1.0",
-      "supersample.SuperTracker 1.0",
-      "supersample.SuperTrackFire 1.0",
-      "supersample.SuperWalls 1.0",
-      "voidious.Diamond 1.8.28"
+      "sample.Crazy",
+      "sample.SpinBot",
+      "sample.Walls"
     };
 
     BattleResults[] results;
-    double[] fitness = new double[robots.length];
+    double[] fitness = new double[robots.length * 2];
 
     for (int i = 0; i < robots.length; i++) {
       double robotScore = 0;
       double opponentScore = 0;
+      double robotScoreFFA = 0;
+      double opponentScoreFFA = 0;
+
       for (int j = 0; j < opponents.length; j++) {
         RobotSpecification[] selectedRobots = engine.getLocalRepository(opponents[j] + ", " + robots[i]);
         battleSpec = new BattleSpecification(5, battlefield, selectedRobots);
@@ -61,11 +57,24 @@ public class BattleRunner {
           opponentScore += results[0].getScore();
         }
       }
+      RobotSpecification[] selectedRobots = engine.getLocalRepository(robots[i] + ", " + opponents[0] + ", " + opponents[1] + ", " + opponents[2]);
+      battleSpec = new BattleSpecification(5 * robots.length, battlefield, selectedRobots);
+      engine.runBattle(battleSpec, true);
+
+      results = battleObserver.getResult();
+
+      for (int j = 0; j < selectedRobots.length; j++) {
+        if (results[j].getTeamLeaderName().equals(robots[i])) {
+          robotScoreFFA += results[j].getScore();
+        } else {
+          opponentScoreFFA += results[j].getScore();
+        }
+      }
+
       fitness[i] = (robotScore / (robotScore + opponentScore)) + 0.01;
+      fitness[i + robots.length] = (robotScoreFFA / (robotScoreFFA + opponentScoreFFA)) + 0.01;
     }
     return fitness;
-
-
   }
 }
 
