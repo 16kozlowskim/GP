@@ -54,9 +54,14 @@ public class GeneticProgram implements Callable<Robot> {
 
       System.out.println("Beginning evolution of generation " + genCount);
 
+      Runnable[] task = new Runnable[popSize];
+
       for (int i = 0; i < popSize; i++) {
-        parent[i].createFile();
-        robotNames[i] = "evolving." + parent[i].name + "*";
+        task[i] = () -> {
+          parent[i].createFile();
+          robotNames[i] = "evolving." + parent[i].name + "*";
+        }
+        new Thread(task[i]).start();
       }
 
       fitnesses = battle.fight(robotNames, genCount);

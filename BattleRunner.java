@@ -42,7 +42,7 @@ public class BattleRunner {
       "sample.Walls"
     };
 
-    if (generation > 20) {
+    if (generation > 15) {
       opponents[0] = "supersample.SuperCrazy*";
       opponents[1] = "supersample.SuperMercutio 1.0";
       opponents[2] = "jk.mega.DrussGT 3.1.4159";
