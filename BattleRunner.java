@@ -15,7 +15,16 @@ public class BattleRunner {
   BattleObserver battleObserver;
   BattlefieldSpecification battlefield;
   BattleSpecification battleSpec;
+  /*
+  public static void main(String[] args) {
 
+    String[] robots = {args[0]};
+    BattleRunner battle = new BattleRunner(args[1]);
+    double[] results = battle.fight(robots, Integer.parseInt(args[2]));
+    System.out.println(results[0] + "," + results[1]);
+
+  }
+  */
   public BattleRunner(String pathToRobocode) {
       engine = new RobocodeEngine(new java.io.File(pathToRobocode));
       RobocodeEngine.setLogMessagesEnabled(false);
@@ -33,10 +42,19 @@ public class BattleRunner {
       "sample.Walls"
     };
 
+    if (generation > 20) {
+      opponents[0] = "supersample.SuperCrazy*";
+      opponents[1] = "supersample.SuperMercutio 1.0";
+      opponents[2] = "jk.mega.DrussGT 3.1.4159";
+    }
+
     BattleResults[] results;
     double[] fitness = new double[robots.length * 2];
 
     for (int i = 0; i < robots.length; i++) {
+
+      System.out.println(robots[i] + " is testing its mettle.");
+
       double robotScore = 0;
       double opponentScore = 0;
       double robotScoreFFA = 0;
@@ -58,7 +76,7 @@ public class BattleRunner {
         }
       }
       RobotSpecification[] selectedRobots = engine.getLocalRepository(robots[i] + ", " + opponents[0] + ", " + opponents[1] + ", " + opponents[2]);
-      battleSpec = new BattleSpecification(5 * robots.length, battlefield, selectedRobots);
+      battleSpec = new BattleSpecification(5 * opponents.length, battlefield, selectedRobots);
       engine.runBattle(battleSpec, true);
 
       results = battleObserver.getResult();

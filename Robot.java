@@ -4,7 +4,7 @@ import java.io.FileWriter;
 
 public class Robot {
 
-  static final int genFunctNum = 14;
+  static final int genFunctNum = 18;
 
   static Random rng = new Random();
 
@@ -14,7 +14,7 @@ public class Robot {
   int ID;
   ArrayList<ArrayList<ExpressionNode>> tree;
   Robot child;
-  String pathToRobocode;
+  static String pathToRobocode;
 
   static final double
     crossTermProb = 0.1,
@@ -24,17 +24,21 @@ public class Robot {
     mutationProb = 0.05,
     crossOverProb = 0.95;
 
-  public Robot(int ID, int generation, String pathToRobocode) {
+  public Robot(int ID, int generation) {
     root = new ExpressionNode[genFunctNum];
     this.generation = generation;
     this.ID = ID;
-    this.pathToRobocode = pathToRobocode;
     name = "Robot_ID_" + ID + "_Gen_" + generation;
     tree = new ArrayList<ArrayList<ExpressionNode>>();
   }
 
-  public Robot clone(int ID) {
-    Robot clone = new Robot(ID, this.generation + 1, this.pathToRobocode);
+  public Robot(int ID, int generation, String pathToRobocode) {
+    this(ID, generation);
+    this.pathToRobocode = pathToRobocode;
+  }
+
+  public Robot clone(int ID, int genIncrement) {
+    Robot clone = new Robot(ID, this.generation + genIncrement);
     for (int i = 0; i < genFunctNum; i++) {
       clone.root[i] = this.root[i].copy();
     }
@@ -49,7 +53,7 @@ public class Robot {
   }
 
   public Robot geneticOp(Robot robot, Robot robot2, int ID) {
-    child = new Robot(ID, generation + 1, this.pathToRobocode);
+    child = new Robot(ID, generation + 1);
 
     for (int i = 0; i < genFunctNum/2; i++) {
       if (rng.nextDouble() < crossOverProb)
@@ -142,6 +146,18 @@ public class Robot {
     }
   }
 
+  public void createFile() {
+    try {
+      FileWriter fileWriter = new FileWriter(pathToRobocode + "/robots/evolving/" + name + ".java");
+      fileWriter.write(createSourceCode());
+      fileWriter.close();
+      Process p = Runtime.getRuntime().exec("javac -cp " + pathToRobocode + "/libs/robocode.jar:. " + pathToRobocode + "/robots/evolving/" + name + ".java");
+      p.waitFor();
+    } catch (Exception e) {
+      System.out.println(e.getMessage());
+    }
+  }
+
   public String createSourceCode() {
     String[] geneticSource = new String[genFunctNum];
     for (int i = 0; i < genFunctNum; i++) {
@@ -191,34 +207,30 @@ public class Robot {
       "\n" +
       "\n  public void onHitByBullet(HitByBulletEvent e) {" +
       "\n" +
+      "\n    if (getOthers() > 1) {" +
       "\n      turnLeft(" + geneticSource[5] + ");" +
       "\n" +
       "\n      ahead(" + geneticSource[6] + ");" +
+      "\n    } else {" +
+      "\n      turnLeft(" + geneticSource[14] + ");" +
       "\n" +
+      "\n      ahead(" + geneticSource[15] + ");" +
+      "\n    }" +
       "\n  }" +
       "\n" +
       "\n  public void onHitRobot(HitRobotEvent e) {" +
       "\n" +
+      "\n    if (getOthers() > 1) {" +
       "\n      turnLeft(" + geneticSource[7] + ");" +
       "\n" +
       "\n      ahead(" + geneticSource[8] + ");" +
+      "\n    } else {" +
+      "\n      turnLeft(" + geneticSource[16] + ");" +
       "\n" +
+      "\n      ahead(" + geneticSource[17] + ");" +
+      "\n    }" +
       "\n  }" +
       "\n}";
     return sourceCode;
   }
-
-  public void createFile() {
-    try {
-      FileWriter fileWriter = new FileWriter(pathToRobocode + "/robots/evolving/" + name + ".java");
-      fileWriter.write(createSourceCode());
-      fileWriter.close();
-      Process p = Runtime.getRuntime().exec("javac -cp " + pathToRobocode + "/libs/robocode.jar:. " + pathToRobocode + "/robots/evolving/" + name + ".java");
-      p.waitFor();
-    } catch (Exception e) {
-      System.out.println(e.getMessage());
-    }
-  }
-
-
 }

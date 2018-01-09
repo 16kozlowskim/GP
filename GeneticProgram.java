@@ -1,6 +1,10 @@
 import java.util.Random;
+import java.util.concurrent.*;
+import java.util.List;
+import java.util.ArrayList;
+import java.io.*;
 
-public class GeneticProgram {
+public class GeneticProgram implements Callable<Robot> {
 
   static Robot[] parent;
   static int maxGen;
@@ -9,7 +13,11 @@ public class GeneticProgram {
   static Random rng = new Random();
   static Robot[] child;
   static String pathToRobocode;
+  private int counter;
 
+  public GeneticProgram(int counter) {
+    this.counter = counter;
+  }
 
   public static void initializeRobot() {
     parent = new Robot[popSize];
@@ -21,7 +29,7 @@ public class GeneticProgram {
     }
   }
 
-  public static void main(String[] args) {
+  public static void main(String[] args) throws InterruptedException, ExecutionException, IOException {
 
     popSize = Integer.parseInt(args[0]);
     maxGen = Integer.parseInt(args[1]);
@@ -44,27 +52,79 @@ public class GeneticProgram {
 
     for (int genCount = 1; genCount <= maxGen; genCount++) {
 
+      System.out.println("Beginning evolution of generation " + genCount);
+
       for (int i = 0; i < popSize; i++) {
         parent[i].createFile();
         robotNames[i] = "evolving." + parent[i].name + "*";
       }
 
       fitnesses = battle.fight(robotNames, genCount);
+      /*
+      ProcessBuilder[] pb = new ProcessBuilder[popSize];
+      Process[] process = new Process[popSize];
+
+      for (int i = 0; i < popSize; i++) {
+        pb[i] = new ProcessBuilder(new String[] {"java", "-cp", pathToRobocode, "/libs/robocode.jar:.", "BattleRunner", robotNames[i], pathToRobocode, "" + genCount});
+        pb[i].redirectErrorStream(true);
+        process[i] = pb[i].start();
+      }
+      System.exit(0);
+      fitnesses = new double[2 * popSize];
+
+      for (int i = 0; i < popSize; i++) {
+        process[i].waitFor();
+        BufferedReader reader = new BufferedReader(new InputStreamReader(process[i].getInputStream()));
+        StringBuilder builder = new StringBuilder();
+        String line = null;
+        while ( (line = reader.readLine()) != null) {
+          builder.append(line);
+        }
+        String[] temp = builder.toString().split(",");
+        System.out.println(temp[0] + ", " + temp[1]);
+        //fitnesses[i] = Double.parseDouble(temp[0]);
+        //fitnesses[i + popSize] = Double.parseDouble(temp[1]);
+      }
+      System.exit(0);
+      */
 
       extractTop();
 
+      List<Callable<Robot>> callableList = new ArrayList<Callable<Robot>>();
+
       for (int i = 2; i < popSize; i++) {
-        int index1 = tournamentSelect1();
-        int index2 = tournamentSelect2();
-        int index3 = tournamentSelect3();
-        child[i] = parent[index1].geneticOp(parent[index2], parent[index3], i + 1);
-        System.out.println("Done: " + i);
+        Callable<Robot> callable = new GeneticProgram(i);
+        callableList.add(callable);
       }
-      for (int i = 0; i < popSize; i++) {
-        parent[i] = child[i];
+
+      ExecutorService executor = Executors.newFixedThreadPool(popSize - 2);
+
+      System.out.println("Creating new generation...");
+
+      List<Future<Robot>> futureObjects = executor.invokeAll(callableList);
+
+      executor.shutdown();
+      while (!executor.isTerminated()) {
+        TimeUnit.SECONDS.sleep(1);
+      }
+
+      parent[0] = child[0];
+      parent[1] = child[1];
+
+      for (int i = 0; i < popSize - 2; i++) {
+        parent[i + 2] = futureObjects.get(i).get();
       }
     }
   }
+
+  @Override
+  public Robot call() throws InterruptedException {
+    int index1 = tournamentSelect1();
+    int index2 = tournamentSelect2();
+    int index3 = tournamentSelect3();
+    return parent[index1].clone(parent[index1].ID, 0).geneticOp(parent[index2].clone(parent[index2].ID, 0), parent[index3].clone(parent[index3].ID, 0), counter + 1);
+  }
+
 
   public static void extractTop() {
     double fitness = 0;
@@ -81,10 +141,10 @@ public class GeneticProgram {
         index2 = i;
       }
     }
-    child[0] = parent[index1].clone(1);
-    child[1] = parent[index2].clone(2);
+    child[0] = parent[index1].clone(1, 1);
+    child[1] = parent[index2].clone(2, 1);
 
-    System.out.println(parent[index1].name + ", " + fitnesses[index1]);
+    System.out.println(parent[index1].name + " got the best score: " + fitnesses[index1]);
   }
 
   public static int tournamentSelect1() {
