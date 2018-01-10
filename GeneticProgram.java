@@ -128,7 +128,7 @@ public class GeneticProgram implements Callable<Robot> {
 
         for (int j = 0; j < popSize / batchNum; j++) {
 
-          System.out.println(temp[j] + " " + temp[j + (popSize/batchNum)]);
+          //System.out.println(temp[j] + " " + temp[j + (popSize/batchNum)]);
 
           fitnesses[j + (i * (popSize / batchNum))] = Double.parseDouble(temp[j]);
           fitnesses[j + (i * (popSize / batchNum)) + popSize] = Double.parseDouble(temp[j + (popSize/batchNum)]);
@@ -194,7 +194,9 @@ public class GeneticProgram implements Callable<Robot> {
     child[0] = parent[index1].clone(1, 1);
     child[1] = parent[index2].clone(2, 1);
 
-    System.out.println(parent[index1].name + " got the best score: " + fitnesses[index1]);
+    double result = (fitnesses[index1] + fitnesses[index1 + popSize]) / 2;
+
+    System.out.println(parent[index1].name + " got the best score: " + result);
   }
 
   public static int tournamentSelect1() {
