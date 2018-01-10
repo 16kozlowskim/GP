@@ -48,7 +48,10 @@ public class BattleRunner {
     String[] opponents = {
       "sample.Crazy",
       "sample.SpinBot",
-      "sample.Walls"
+      "sample.Walls",
+      "sample.TrackFire",
+      "sample.Tracker",
+      "sample.Corners"
     };
 
     if (generation > 15) {

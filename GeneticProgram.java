@@ -54,46 +54,51 @@ public class GeneticProgram implements Callable<Robot> {
 
       System.out.println("Beginning evolution of generation " + genCount);
 
-      Runnable[] task = new Runnable[popSize];
-      Thread[] threads = new Thread[popSize];
+      int threadNum = 4;
+      Runnable[] task = new Runnable[threadNum];
+      Thread[] threads = new Thread[threadNum];
 
-      for (int i = 0; i < popSize; i++) {
+
+      for (int i = 0; i < threadNum; i++) {
         final int j = i;
         task[j] = () -> {
-          parent[j].createFile();
-          robotNames[j] = "evolving." + parent[j].name + "*";
+          for (int n = 0; n < popSize / threadNum; n++) {
+            parent[n + (j * popSize / threadNum)].createFile();
+            robotNames[n + (j * popSize / threadNum)] = "evolving." + parent[n + (j * popSize / threadNum)].name + "*";
+          }
         };
         threads[i] = new Thread(task[j]);
         threads[i].start();
       }
 
-      for (int i = 0; i < popSize; i++) {
+      for (int i = 0; i < threadNum; i++) {
         threads[i].join();
       }
-      TimeUnit.SECONDS.sleep(10);
       //fitnesses = battle.fight(robotNames, genCount);
 
-      String[][] nameBatch = new String[10][popSize / 10];
+      int batchNum = 25;
+
+      String[][] nameBatch = new String[batchNum][popSize / batchNum];
       int n = 0;
-      for (int i = 0; i < 10; i++) {
-        for (int j = 0; j < popSize / 10; j++) {
+      for (int i = 0; i < batchNum; i++) {
+        for (int j = 0; j < popSize / batchNum; j++) {
           nameBatch[i][j] = robotNames[n];
           n++;
         }
       }
 
-      ProcessBuilder[] pb = new ProcessBuilder[10];
-      Process[] process = new Process[10];
+      ProcessBuilder[] pb = new ProcessBuilder[batchNum];
+      Process[] process = new Process[batchNum];
 
-      for (int i = 0; i < 10; i++) {
-        String[] arg = new String[6 + (popSize / 10)];
+      for (int i = 0; i < batchNum; i++) {
+        String[] arg = new String[6 + (popSize / batchNum)];
         arg[0] = "java";
         arg[1] = "-cp";
         arg[2] = pathToRobocode + "/libs/robocode.jar:.";
         arg[3] = "BattleRunner";
         arg[4] = pathToRobocode;
         arg[5] = "" + genCount;
-        for (int j = 0; j < popSize / 10; j++) {
+        for (int j = 0; j < popSize / batchNum; j++) {
           arg[j + 6] = nameBatch[i][j];
         }
 
@@ -104,7 +109,7 @@ public class GeneticProgram implements Callable<Robot> {
 
       fitnesses = new double[2 * popSize];
 
-      for (int i = 0; i < 10; i++) {
+      for (int i = 0; i < batchNum; i++) {
         //process[i].waitFor();
         BufferedReader reader = new BufferedReader(new InputStreamReader(process[i].getErrorStream()));
         //BufferedReader reader2 = new BufferedReader(new InputStreamReader(process[i].getInputStream()));
@@ -121,9 +126,9 @@ public class GeneticProgram implements Callable<Robot> {
         String[] temp = builder.toString().split(",");
         //System.out.println(temp[0] + ", " + temp[1]);
 
-        for (int j = 0; j < popSize / 10; j++) {
-          fitnesses[j + (i * (popSize / 10))] = Double.parseDouble(temp[j]);
-          fitnesses[j + (i * (popSize / 10)) + popSize] = Double.parseDouble(temp[j + popSize/10]);
+        for (int j = 0; j < popSize / batchNum; j++) {
+          fitnesses[j + (i * (popSize / batchNum))] = Double.parseDouble(temp[j]);
+          fitnesses[j + (i * (popSize / batchNum)) + popSize] = Double.parseDouble(temp[j + popSize/batchNum]);
         }
       }
 
