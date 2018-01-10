@@ -182,7 +182,7 @@ public class Robot {
       "\n    distanceToEnemy = e.getDistance();" +
       "\n    enemyHeading = e.getHeading();" +
       "\n" +
-      "\n    if (getOthers() > 1) {" +
+      "\n    if (getOthers() == 1) {" +
       "\n      turnGunLeft(" + geneticSource[0] + ");" +
       "\n" +
       "\n      fire(" + geneticSource[1] + ");" +
@@ -207,7 +207,7 @@ public class Robot {
       "\n" +
       "\n  public void onHitByBullet(HitByBulletEvent e) {" +
       "\n" +
-      "\n    if (getOthers() > 1) {" +
+      "\n    if (getOthers() == 1) {" +
       "\n      turnLeft(" + geneticSource[5] + ");" +
       "\n" +
       "\n      ahead(" + geneticSource[6] + ");" +
@@ -220,7 +220,7 @@ public class Robot {
       "\n" +
       "\n  public void onHitRobot(HitRobotEvent e) {" +
       "\n" +
-      "\n    if (getOthers() > 1) {" +
+      "\n    if (getOthers() == 1) {" +
       "\n      turnLeft(" + geneticSource[7] + ");" +
       "\n" +
       "\n      ahead(" + geneticSource[8] + ");" +
