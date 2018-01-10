@@ -31,7 +31,7 @@ public class GeneticProgram implements Callable<Robot> {
     }
   }
 
-  public void createFile(Robot robot) {
+  public static void createFile(Robot robot) {
     try {
       FileWriter fileWriter = new FileWriter(pathToRobocode + "/robots/evolving/" + robot.name + ".java");
       fileWriter.write(robot.createSourceCode());
@@ -43,7 +43,7 @@ public class GeneticProgram implements Callable<Robot> {
     }
   }
 
-  public void resetDir() {
+  public static void resetDir() {
     try {
       Process p = Runtime.getRuntime().exec("rm -rf " + pathToRobocode + "/robots/evolving");
       p.waitFor();
