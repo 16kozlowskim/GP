@@ -1,6 +1,7 @@
 import robocode.control.*;
 import robocode.control.events.*;
 import robocode.BattleResults;
+import java.io.*;
 
 //
 // Application that demonstrates how to run two sample robots in Robocode using the
@@ -15,16 +16,24 @@ public class BattleRunner {
   BattleObserver battleObserver;
   BattlefieldSpecification battlefield;
   BattleSpecification battleSpec;
-  /*
+
   public static void main(String[] args) {
 
-    String[] robots = {args[0]};
-    BattleRunner battle = new BattleRunner(args[1]);
-    double[] results = battle.fight(robots, Integer.parseInt(args[2]));
-    System.out.println(results[0] + "," + results[1]);
+    String[] robots = new String[args.length - 2];
+    for (int i = 0; i < robots.length; i++) {
+      robots[i] = args[i + 2];
+    }
+
+    BattleRunner battle = new BattleRunner(args[0]);
+    double[] results = battle.fight(robots, Integer.parseInt(args[1]));
+
+    for (int i = 0; i < results.length; i++) {
+      System.err.println(results[i] + ",");
+    }
+
 
   }
-  */
+
   public BattleRunner(String pathToRobocode) {
       engine = new RobocodeEngine(new java.io.File(pathToRobocode));
       RobocodeEngine.setLogMessagesEnabled(false);

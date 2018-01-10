@@ -48,52 +48,89 @@ public class GeneticProgram implements Callable<Robot> {
 
     String[] robotNames = new String[popSize];
 
-    BattleRunner battle = new BattleRunner(pathToRobocode);
+    //BattleRunner battle = new BattleRunner(pathToRobocode);
 
     for (int genCount = 1; genCount <= maxGen; genCount++) {
 
       System.out.println("Beginning evolution of generation " + genCount);
 
       Runnable[] task = new Runnable[popSize];
+      Thread[] threads = new Thread[popSize];
 
       for (int i = 0; i < popSize; i++) {
-        task[i] = () -> {
-          parent[i].createFile();
-          robotNames[i] = "evolving." + parent[i].name + "*";
-        }
-        new Thread(task[i]).start();
+        final int j = i;
+        task[j] = () -> {
+          parent[j].createFile();
+          robotNames[j] = "evolving." + parent[j].name + "*";
+        };
+        threads[i] = new Thread(task[j]);
+        threads[i].start();
       }
 
-      fitnesses = battle.fight(robotNames, genCount);
-      /*
-      ProcessBuilder[] pb = new ProcessBuilder[popSize];
-      Process[] process = new Process[popSize];
-
       for (int i = 0; i < popSize; i++) {
-        pb[i] = new ProcessBuilder(new String[] {"java", "-cp", pathToRobocode, "/libs/robocode.jar:.", "BattleRunner", robotNames[i], pathToRobocode, "" + genCount});
-        pb[i].redirectErrorStream(true);
+        threads[i].join();
+      }
+      TimeUnit.SECONDS.sleep(10);
+      //fitnesses = battle.fight(robotNames, genCount);
+
+      String[][] nameBatch = new String[10][popSize / 10];
+      int n = 0;
+      for (int i = 0; i < 10; i++) {
+        for (int j = 0; j < popSize / 10; j++) {
+          nameBatch[i][j] = robotNames[n];
+          n++;
+        }
+      }
+
+      ProcessBuilder[] pb = new ProcessBuilder[10];
+      Process[] process = new Process[10];
+
+      for (int i = 0; i < 10; i++) {
+        String[] arg = new String[6 + (popSize / 10)];
+        arg[0] = "java";
+        arg[1] = "-cp";
+        arg[2] = pathToRobocode + "/libs/robocode.jar:.";
+        arg[3] = "BattleRunner";
+        arg[4] = pathToRobocode;
+        arg[5] = "" + genCount;
+        for (int j = 0; j < popSize / 10; j++) {
+          arg[j + 6] = nameBatch[i][j];
+        }
+
+        pb[i] = new ProcessBuilder(arg);
+        //pb[i].redirectErrorStream(true);
         process[i] = pb[i].start();
       }
-      System.exit(0);
+
       fitnesses = new double[2 * popSize];
 
-      for (int i = 0; i < popSize; i++) {
-        process[i].waitFor();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(process[i].getInputStream()));
+      for (int i = 0; i < 10; i++) {
+        //process[i].waitFor();
+        BufferedReader reader = new BufferedReader(new InputStreamReader(process[i].getErrorStream()));
+        //BufferedReader reader2 = new BufferedReader(new InputStreamReader(process[i].getInputStream()));
         StringBuilder builder = new StringBuilder();
         String line = null;
-        while ( (line = reader.readLine()) != null) {
+        //String message = null;
+        while ((line = reader.readLine()) != null) {
           builder.append(line);
         }
+        /*while ((message = reader2.readLine()) != null) {
+          builder.append(message);
+        }
+        System.out.println(message);*/
         String[] temp = builder.toString().split(",");
-        System.out.println(temp[0] + ", " + temp[1]);
-        //fitnesses[i] = Double.parseDouble(temp[0]);
-        //fitnesses[i + popSize] = Double.parseDouble(temp[1]);
+        //System.out.println(temp[0] + ", " + temp[1]);
+
+        for (int j = 0; j < popSize / 10; j++) {
+          fitnesses[j + (i * (popSize / 10))] = Double.parseDouble(temp[j]);
+          fitnesses[j + (i * (popSize / 10)) + popSize] = Double.parseDouble(temp[j + popSize/10]);
+        }
       }
-      System.exit(0);
-      */
 
       extractTop();
+      /*for (int i = 0; i < popSize; i++) {
+        System.out.println(fitnesses[i]);
+      }*/
 
       List<Callable<Robot>> callableList = new ArrayList<Callable<Robot>>();
 
