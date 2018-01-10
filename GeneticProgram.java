@@ -124,11 +124,10 @@ public class GeneticProgram implements Callable<Robot> {
         }
         System.out.println(message);*/
         String[] temp = builder.toString().split(",");
-        //System.out.println(temp[0] + ", " + temp[1]);
 
         for (int j = 0; j < popSize / batchNum; j++) {
-          fitnesses[j + (i * (popSize / batchNum))] = Double.parseDouble(temp[j]);
-          fitnesses[j + (i * (popSize / batchNum)) + popSize] = Double.parseDouble(temp[j + popSize/batchNum]);
+          fitnesses[j + (i * (popSize / batchNum))] = Double.parseDouble(temp[j].split("g")[1]);
+          fitnesses[j + (i * (popSize / batchNum)) + popSize] = Double.parseDouble(temp[j + (popSize/batchNum)]);
         }
       }
 
