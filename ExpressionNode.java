@@ -265,7 +265,6 @@ public class ExpressionNode {
     "getGunCoolingRate()", // in double units/turn
     "getGunHeading()", // in double degrees (0 <= getGunHeading() < 360)
     "getHeading()", // in double degrees (0 <= getHeading() < 360)
-    "getOthers()", // in int amount of opponents remaining in round
     "getRadarHeading()", // in double degrees (0 <= getRadarHeading() < 360)
     "getVelocity()", // in double pixels/turn
     "getX()", // in double pixels

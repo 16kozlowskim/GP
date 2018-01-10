@@ -28,7 +28,7 @@ public class BattleRunner {
     double[] results = battle.fight(robots, Integer.parseInt(args[1]));
 
     for (int i = 0; i < results.length; i++) {
-      System.err.println(results[i] + ",");
+      System.out.println(results[i] + ",");
     }
 
 
@@ -65,7 +65,7 @@ public class BattleRunner {
 
     for (int i = 0; i < robots.length; i++) {
 
-      System.out.println(robots[i] + " is testing its mettle.");
+      //System.out.println(robots[i] + " is testing its mettle.");
 
       double robotScore = 0;
       double opponentScore = 0;
