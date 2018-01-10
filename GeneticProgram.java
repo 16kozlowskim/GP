@@ -54,7 +54,7 @@ public class GeneticProgram implements Callable<Robot> {
 
       System.out.println("Beginning evolution of generation " + genCount);
 
-      int threadNum = 4;
+      int threadNum = 10;
       Runnable[] task = new Runnable[threadNum];
       Thread[] threads = new Thread[threadNum];
 
@@ -76,7 +76,7 @@ public class GeneticProgram implements Callable<Robot> {
       }
       //fitnesses = battle.fight(robotNames, genCount);
 
-      int batchNum = 25;
+      int batchNum = 10;
 
       String[][] nameBatch = new String[batchNum][popSize / batchNum];
       int n = 0;
