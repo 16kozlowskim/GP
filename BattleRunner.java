@@ -3,13 +3,6 @@ import robocode.control.events.*;
 import robocode.BattleResults;
 import java.io.*;
 
-//
-// Application that demonstrates how to run two sample robots in Robocode using the
-// RobocodeEngine from the robocode.control package.
-//
-// @author Flemming N. Larsen
-//
-
 public class BattleRunner {
 
   RobocodeEngine engine;
@@ -30,7 +23,6 @@ public class BattleRunner {
     for (int i = 0; i < results.length; i++) {
       System.out.println(results[i] + ",");
     }
-
 
   }
 
@@ -110,7 +102,7 @@ public class BattleRunner {
 
 class BattleObserver extends BattleAdaptor {
 
-  robocode.BattleResults[] result;
+  private robocode.BattleResults[] result;
 
   public BattleResults[] getResult() {
     return result;
@@ -118,11 +110,6 @@ class BattleObserver extends BattleAdaptor {
 
   public void onBattleCompleted(BattleCompletedEvent e) {
     result = e.getIndexedResults();
-  }
-
-  // Called when the game sends out an information message during the battle
-  public void onBattleMessage(BattleMessageEvent e) {
-    //System.out.println("Msg> " + e.getMessage());
   }
 
   // Called when the game sends out an error message during the battle

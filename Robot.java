@@ -1,6 +1,6 @@
 import java.util.ArrayList;
 import java.util.Random;
-import java.io.FileWriter;
+import java.io.*;
 
 public class Robot {
 
@@ -48,7 +48,7 @@ public class Robot {
   public void initialize() {
     for (int i = 0; i < genFunctNum; i++) {
       root[i] = new ExpressionNode(0);
-      root[i].evolve(0, i % 9);
+      root[i].grow(0, i % 9);
     }
   }
 
@@ -75,8 +75,8 @@ public class Robot {
   public void crossOver(Robot robot, int i) {
 
     child.root[i] = root[i].copy();
-    child.tree.add(child.root[i].assemble(child.root[i]));
-    robot.tree.add(robot.root[i].assemble(robot.root[i]));
+    child.tree.add(child.root[i].assembleList(child.root[i]));
+    robot.tree.add(robot.root[i].assembleList(robot.root[i]));
 
     Boolean isTerminal1 = rng.nextDouble() < crossTermProb ? true : false;
     Boolean isTerminal2 = rng.nextDouble() < crossTermProb ? true : false;
@@ -114,7 +114,7 @@ public class Robot {
   public void mutate(int i) {
 
     child.root[i] = root[i].copy();
-    child.tree.add(child.root[i].assemble(child.root[i]));
+    child.tree.add(child.root[i].assembleList(child.root[i]));
 
     Boolean isTerminal = rng.nextDouble() < mutateTermProb ? true : false;
 
@@ -127,7 +127,7 @@ public class Robot {
 
     if (j == 0) {
       child.root[i] = new ExpressionNode(0);
-      child.root[i].evolve(0, i % 9);
+      child.root[i].grow(0, i % 9);
     } else {
 
       int depth = child.tree.get(i).get(j).depth;
@@ -139,7 +139,7 @@ public class Robot {
       for (int n = 0; n < child.tree.get(i).get(j).arity; n++) {
         if (child.tree.get(i).get(j).children[n] == a) {
           child.tree.get(i).get(j).children[n] = new ExpressionNode(child.tree.get(i).get(j).depth + 1);
-          child.tree.get(i).get(j).children[n].evolve(child.tree.get(i).get(j).depth + 1, i % 9);
+          child.tree.get(i).get(j).children[n].grow(child.tree.get(i).get(j).depth + 1, i % 9);
           break;
         }
       }
@@ -161,7 +161,7 @@ public class Robot {
   public String createSourceCode() {
     String[] geneticSource = new String[genFunctNum];
     for (int i = 0; i < genFunctNum; i++) {
-      geneticSource[i] = root[i].compose();
+      geneticSource[i] = root[i].assembleExpression();
     }
     String sourceCode =
       "package evolving;" +

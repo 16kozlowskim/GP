@@ -3,52 +3,55 @@ import java.util.Random;
 
 public class ExpressionNode {
 
-  static final double
-    scanRobotTermProb = 0.5,
+  static final double scanRobotTermProb = 0.5,
     constTermProb = 0.05,
-    genTermProb = 0.45,
-    termProb[] = {
+    genTermProb = 0.5;
+
+  static final double[] termProb = {
       scanRobotTermProb,
       constTermProb,
       genTermProb
-    },
+    };
 
-    hitByBulletTermProb = 0.25,
+  static final double hitByBulletTermProb = 0.25,
     constTermProb2 = 0.1,
-    genTermProb2 = 0.65,
-    termProb2[] = {
+    genTermProb2 = 0.65;
+
+  static final double[] termProb2 = {
       hitByBulletTermProb,
       constTermProb2,
       genTermProb2
-    },
+    };
 
-    hitRobotTermProb = 0.25,
+  static final double hitRobotTermProb = 0.25,
     constTermProb3 = 0.1,
-    genTermProb3 = 0.65,
-    termProb3[] = {
+    genTermProb3 = 0.65;
+
+  static final double[] termProb3 = {
       hitRobotTermProb,
       constTermProb3,
       genTermProb3
-    },
+    };
 
-    eventTermProb[][] = {
+  static final double eventTermProb[][] = {
       termProb,
       termProb2,
       termProb3
-    },
+    };
 
-    unaryFuncProb = 0.2,
+  static final double unaryFuncProb = 0.2,
     binaryFuncProb = 0.5,
     ternaryFuncProb = 0.1,
-    quaternaryFuncProb = 0.2,
-    funcProb[] = {
+    quaternaryFuncProb = 0.2;
+
+  static final double[] funcProb = {
       unaryFuncProb,
       binaryFuncProb,
       ternaryFuncProb,
       quaternaryFuncProb
-    },
+    };
 
-    terminalProb = 0.3,
+  static final double terminalProb = 0.3,
     functionProb = 0.7;
 
   int depth, arity;
@@ -66,52 +69,12 @@ public class ExpressionNode {
     this.depth = depth;
   }
 
-  public String compose() {
-    String composed = expression;
+  public void grow(int off, int val) {
 
-    for (int i = 0; i < arity; i++) {
-      composed = composed.replaceFirst("&"+(i+1), children[i].compose());
-    }
-
-    composed = "("+composed+")";
-
-    return composed;
-  }
-
-  public void evolve(int off, int i) {
-    setArity(off);
-    assignExpression(off, i);
-  }
-
-  public ArrayList<ExpressionNode> assemble(ExpressionNode node) {
-    assembled = new ArrayList<ExpressionNode>();
-    assembled.add(node);
-    for (int i = 0; i < arity; i++) {
-      assembled.addAll(children[i].assemble(children[i]));
-    }
-    return assembled;
-  }
-
-  public void setArity(int off) {
-    double randno = rng.nextDouble();
-    if (((minDepth + off) > depth) || ((rng.nextDouble() < functionProb) && (depth < (maxDepth + off)))) {
-      for (int i = 0; i < funcProb.length; i++) {
-        randno -= funcProb[i];
-        if (randno < 0) {
-          arity = i + 1;
-          break;
-        }
-      }
-    } else {
-        arity = 0;
-    }
-    children = new ExpressionNode[arity];
-  }
-
-  public void assignExpression(int off, int j) {
-
+    double randno;
     int index = -1;
-    switch (j) {
+
+    switch (val) {
       case 0:
       case 1:
       case 2:
@@ -128,7 +91,23 @@ public class ExpressionNode {
         index = 2;
     }
 
-    double randno  = rng.nextDouble();
+    randno = rng.nextDouble();
+
+    if (((minDepth + off) > depth) || ((rng.nextDouble() < functionProb) && (depth < (maxDepth + off)))) {
+      for (int i = 0; i < funcProb.length; i++) {
+        randno -= funcProb[i];
+        if (randno < 0) {
+          arity = i + 1;
+          break;
+        }
+      }
+    } else {
+        arity = 0;
+    }
+    children = new ExpressionNode[arity];
+
+    randno = rng.nextDouble();
+
     if (arity == 0) {
       for (int i = 0; i < termProb.length; i++) {
         randno -= eventTermProb[index][i];
@@ -143,9 +122,30 @@ public class ExpressionNode {
       expression = functionTerminalSet[arity][rng.nextInt(functionTerminalSet[arity].length)][0];
       for (int i = 0; i < arity; i++) {
         children[i] = new ExpressionNode(depth + 1);
-        children[i].evolve(off, j);
+        children[i].grow(off, val);
       }
     }
+  }
+
+  public ArrayList<ExpressionNode> assembleList(ExpressionNode node) {
+    assembled = new ArrayList<ExpressionNode>();
+    assembled.add(node);
+    for (int i = 0; i < arity; i++) {
+      assembled.addAll(children[i].assembleList(children[i]));
+    }
+    return assembled;
+  }
+
+  public String assembleExpression() {
+    String composed = expression;
+
+    for (int i = 0; i < arity; i++) {
+      composed = composed.replaceFirst("&"+(i+1), children[i].assembleExpression());
+    }
+
+    composed = "("+composed+")";
+
+    return composed;
   }
 
   public ExpressionNode copy() {
@@ -227,11 +227,45 @@ public class ExpressionNode {
     }
   }
 
+  static final String[][] unaryFunctions = {
+    {"Math.sin(&1)"},
+    {"Math.cos(&1)"},
+    {"Math.asin(&1)"},
+    {"Math.acos(&1)"},
+    {"Math.abs(&1)"},
+    {"-1 * &1"},
+    {"Math.toRadians(&1)"},
+    {"Math.toDegrees(&1)"}
+  };
+
+  static final String[][] binaryFunctions = {
+    {"Math.min(&1, &2)"},
+    {"Math.max(&1, &2)"},
+    {"&1 + &2"},
+    {"&1 - &2"},
+    {"&1 * &2"},
+    {"&1 / &2"}
+  };
+
+  static final String[][] ternaryFunctions = {
+    {"&1 > 0 ? &2 : &3"},
+    {"&1 < 0 ? &2 : &3"},
+    {"&1 == 0 ? &2 : &3"}
+  };
+
+  static final String[][] quaternaryFunctions = {
+    {"&1 > &2 ? &3 : &4"},
+    {"&1 < &2 ? &3 : &4"},
+    {"&1 == &2 ? &3 : &4"}
+  };
+
   static final String[] onScannedRobotTerminals = {
     "e.getBearing()", // in double degrees (-180 <= getBearing() < 180)
+    "e.getBearingRadians()",
     "e.getDistance()", // in double pixels
     "e.getEnergy()", // in double
     "e.getHeading()", // in double degrees (0 <= getHeading() < 360)
+    "e.getHeadingRadians()",
     "e.getVelocity()" // in double pixels/turn
   };
 
@@ -254,8 +288,8 @@ public class ExpressionNode {
 
   static final String[] constantTerminals = {
     "Math.PI",
-    "Math.random()",
-    "0.01"
+    "2 * Math.random() - 1",
+    "0.01",
   };
 
   static final String[] generalTerminals = {
@@ -279,34 +313,6 @@ public class ExpressionNode {
     generalTerminals
   };
 
-  static final String[][] unaryFunctions = {
-    {"Math.sin(&1)"},
-    {"Math.cos(&1)"},
-    {"Math.asin(&1)"},
-    {"Math.acos(&1)"},
-    {"Math.abs(&1)"},
-    {"-1 * &1"},
-    {"Math.toRadians(&1)"},
-    {"Math.toDegrees(&1)"}
-  };
-
-  static final String[][] binaryFunctions = {
-    {"Math.min(&1, &2)"},
-    {"Math.max(&1, &2)"},
-    {"&1 + &2"},
-    {"&1 - &2"},
-    {"&1 * &2"},
-    {"&1 / &2"}
-  };
-
-  static final String[][] ternaryFunctions = {
-    {"&1 > 0 ? &2 : &3"}
-  };
-
-  static final String[][] quaternaryFunctions = {
-    {"&1 > &2 ? &3 : &4"}
-  };
-
   static final String[][][] functionTerminalSet = {
     terminalSet,
     unaryFunctions,
@@ -314,5 +320,6 @@ public class ExpressionNode {
     ternaryFunctions,
     quaternaryFunctions
   };
+
 
 }
