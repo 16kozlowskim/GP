@@ -146,18 +146,6 @@ public class Robot {
     }
   }
 
-  public void createFile() {
-    try {
-      FileWriter fileWriter = new FileWriter(pathToRobocode + "/robots/evolving/" + name + ".java");
-      fileWriter.write(createSourceCode());
-      fileWriter.close();
-      Process p = Runtime.getRuntime().exec("javac -cp " + pathToRobocode + "/libs/robocode.jar:. " + pathToRobocode + "/robots/evolving/" + name + ".java");
-      p.waitFor();
-    } catch (Exception e) {
-      System.out.println(e.getMessage());
-    }
-  }
-
   public String createSourceCode() {
     String[] geneticSource = new String[genFunctNum];
     for (int i = 0; i < genFunctNum; i++) {

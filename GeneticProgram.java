@@ -14,6 +14,8 @@ public class GeneticProgram implements Callable<Robot> {
   static Robot[] child;
   static String pathToRobocode;
   private int counter;
+  static int threadNum = 20;
+  static int processNum = 20;
 
   public GeneticProgram(int counter) {
     this.counter = counter;
@@ -29,12 +31,19 @@ public class GeneticProgram implements Callable<Robot> {
     }
   }
 
-  public static void main(String[] args) throws InterruptedException, ExecutionException, IOException {
+  public void createFile(Robot robot) {
+    try {
+      FileWriter fileWriter = new FileWriter(pathToRobocode + "/robots/evolving/" + robot.name + ".java");
+      fileWriter.write(robot.createSourceCode());
+      fileWriter.close();
+      Process p = Runtime.getRuntime().exec("javac -cp " + pathToRobocode + "/libs/robocode.jar:. " + pathToRobocode + "/robots/evolving/" + robot.name + ".java");
+      p.waitFor();
+    } catch (Exception e) {
+      System.out.println(e.getMessage());
+    }
+  }
 
-    popSize = Integer.parseInt(args[0]);
-    maxGen = Integer.parseInt(args[1]);
-    pathToRobocode = args[2];
-
+  public void resetDir() {
     try {
       Process p = Runtime.getRuntime().exec("rm -rf " + pathToRobocode + "/robots/evolving");
       p.waitFor();
@@ -43,6 +52,15 @@ public class GeneticProgram implements Callable<Robot> {
     } catch (Exception e) {
       System.out.println(e.getMessage());
     }
+  }
+
+  public static void main(String[] args) throws InterruptedException, ExecutionException, IOException {
+
+    popSize = Integer.parseInt(args[0]);
+    maxGen = Integer.parseInt(args[1]);
+    pathToRobocode = args[2];
+
+    resetDir();
 
     initializeRobot();
 
@@ -54,7 +72,6 @@ public class GeneticProgram implements Callable<Robot> {
 
       System.out.println("Beginning evolution of generation " + genCount);
 
-      int threadNum = 20;
       Runnable[] task = new Runnable[threadNum];
       Thread[] threads = new Thread[threadNum];
 
@@ -63,7 +80,7 @@ public class GeneticProgram implements Callable<Robot> {
         final int j = i;
         task[j] = () -> {
           for (int n = 0; n < popSize / threadNum; n++) {
-            parent[n + (j * popSize / threadNum)].createFile();
+            createFile(parent[n + (j * popSize / threadNum)]);
             robotNames[n + (j * popSize / threadNum)] = "evolving." + parent[n + (j * popSize / threadNum)].name + "*";
           }
         };
@@ -75,8 +92,6 @@ public class GeneticProgram implements Callable<Robot> {
         threads[i].join();
       }
       //fitnesses = battle.fight(robotNames, genCount);
-
-      int processNum = 20;
 
       String[][] nameBatch = new String[processNum][popSize / processNum];
       int n = 0;
