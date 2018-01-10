@@ -76,7 +76,7 @@ public class GeneticProgram implements Callable<Robot> {
       }
       //fitnesses = battle.fight(robotNames, genCount);
 
-      int batchNum = 10;
+      int batchNum = 25;
 
       String[][] nameBatch = new String[batchNum][popSize / batchNum];
       int n = 0;
