@@ -111,9 +111,5 @@ class BattleObserver extends BattleAdaptor {
   public void onBattleCompleted(BattleCompletedEvent e) {
     result = e.getIndexedResults();
   }
-
-  // Called when the game sends out an error message during the battle
-  public void onBattleError(BattleErrorEvent e) {
-    System.out.println("Err> " + e.getError());
-  }
+  
 }

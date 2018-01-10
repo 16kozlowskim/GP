@@ -1,7 +1,100 @@
 import java.util.ArrayList;
 import java.util.Random;
 
-public class ExpressionNode {
+public class TreeNode {
+
+  static final String[] unaryFunctions = {
+    "Math.sin(&1)",
+    "Math.cos(&1)",
+    "Math.asin(&1)",
+    "Math.acos(&1)",
+    "Math.abs(&1)",
+    "-1 * &1",
+    "Math.toRadians(&1)",
+    "Math.toDegrees(&1)"
+  };
+
+  static final String[] binaryFunctions = {
+    "Math.min(&1, &2)",
+    "Math.max(&1, &2)",
+    "&1 + &2",
+    "&1 - &2",
+    "&1 * &2",
+    "&1 / &2"
+  };
+
+  static final String[] ternaryFunctions = {
+    "&1 > 0 ? &2 : &3",
+    "&1 < 0 ? &2 : &3",
+    "&1 == 0 ? &2 : &3"
+  };
+
+  static final String[] quaternaryFunctions = {
+    "&1 > &2 ? &3 : &4",
+    "&1 < &2 ? &3 : &4",
+    "&1 == &2 ? &3 : &4"
+  };
+
+  static final String[] onScannedRobotTerminals = {
+    "e.getBearing()", // in double degrees (-180 <= getBearing() < 180)
+    "e.getBearingRadians()",
+    "e.getDistance()", // in double pixels
+    "e.getEnergy()", // in double
+    "e.getHeading()", // in double degrees (0 <= getHeading() < 360)
+    "e.getHeadingRadians()",
+    "e.getVelocity()" // in double pixels/turn
+  };
+
+  static final String[] onHitByBulletTerminals = {
+    "e.getBearing()",
+    "e.getBearingRadians()",
+    "e.getHeading()",
+    "e.getHeadingRadians()",
+    "distanceToEnemy",
+    "enemyHeading"
+  };
+
+  static final String[] onHitRobotTerminals = {
+    "e.getBearing()",
+    "e.getBearingRadians()",
+    "e.getEnergy()",
+    "distanceToEnemy",
+    "enemyHeading"
+  };
+
+  static final String[] constantTerminals = {
+    "Math.PI",
+    "2 * Math.random() - 1",
+    "0.01",
+  };
+
+  static final String[] generalTerminals = {
+    "getBattleFieldHeight()", // in double pixels
+    "getBattleFieldWidth()", // in double pixels
+    "getEnergy()", // in double
+    "getGunCoolingRate()", // in double units/turn
+    "getGunHeading()", // in double degrees (0 <= getGunHeading() < 360)
+    "getHeading()", // in double degrees (0 <= getHeading() < 360)
+    "getRadarHeading()", // in double degrees (0 <= getRadarHeading() < 360)
+    "getVelocity()", // in double pixels/turn
+    "getX()", // in double pixels
+    "getY()", // in double pixels
+  };
+
+  static final String[][] terminalSet = {
+    onScannedRobotTerminals,
+    onHitByBulletTerminals,
+    onHitRobotTerminals,
+    constantTerminals,
+    generalTerminals
+  };
+
+  static final String[][] functionSet = {
+    unaryFunctions,
+    binaryFunctions,
+    ternaryFunctions,
+    quaternaryFunctions
+  };
 
   static final double scanRobotTermProb = 0.5,
     constTermProb = 0.05,
@@ -60,12 +153,12 @@ public class ExpressionNode {
 
   static Random rng = new Random();
 
-  ArrayList<ExpressionNode> assembled;
+  ArrayList<TreeNode> assembled;
 
-  ExpressionNode[] children;
+  TreeNode[] children;
   String expression;
 
-  public ExpressionNode(int depth) {
+  public TreeNode(int depth) {
     this.depth = depth;
   }
 
@@ -104,7 +197,7 @@ public class ExpressionNode {
     } else {
         arity = 0;
     }
-    children = new ExpressionNode[arity];
+    children = new TreeNode[arity];
 
     randno = rng.nextDouble();
 
@@ -114,21 +207,21 @@ public class ExpressionNode {
         if (randno < 0) {
           if (i == 0) i = index;
           else i += 2;
-          expression = functionTerminalSet[0][i][rng.nextInt(functionTerminalSet[0][i].length)];
+          expression = terminalSet[i][rng.nextInt(terminalSet[i].length)];
           break;
         }
       }
     } else {
-      expression = functionTerminalSet[arity][rng.nextInt(functionTerminalSet[arity].length)][0];
+      expression = functionSet[arity - 1][rng.nextInt(functionSet[arity - 1].length)];
       for (int i = 0; i < arity; i++) {
-        children[i] = new ExpressionNode(depth + 1);
+        children[i] = new TreeNode(depth + 1);
         children[i].grow(off, val);
       }
     }
   }
 
-  public ArrayList<ExpressionNode> assembleList(ExpressionNode node) {
-    assembled = new ArrayList<ExpressionNode>();
+  public ArrayList<TreeNode> assembleList(TreeNode node) {
+    assembled = new ArrayList<TreeNode>();
     assembled.add(node);
     for (int i = 0; i < arity; i++) {
       assembled.addAll(children[i].assembleList(children[i]));
@@ -148,10 +241,10 @@ public class ExpressionNode {
     return composed;
   }
 
-  public ExpressionNode copy() {
-    ExpressionNode copy = new ExpressionNode(depth);
+  public TreeNode copy() {
+    TreeNode copy = new TreeNode(depth);
     copy.arity = arity;
-    copy.children = new ExpressionNode[arity];
+    copy.children = new TreeNode[arity];
     copy.expression = expression;
     for (int i = 0; i < arity; i++) {
       copy.children[i] = children[i].copy();
@@ -159,9 +252,9 @@ public class ExpressionNode {
     return copy;
   }
 
-  public ExpressionNode getSubTree(Boolean isTerminal) {
+  public TreeNode getSubTree(Boolean isTerminal) {
     if ((treeSize() == 1) && !isTerminal) return getSubTree(true);
-    ArrayList<ExpressionNode> nodes = new ArrayList<ExpressionNode>();
+    ArrayList<TreeNode> nodes = new ArrayList<TreeNode>();
     if (isTerminal) {
       for (int i = 0; i < assembled.size(); i++) {
         if (assembled.get(i).arity == 0) {
@@ -177,7 +270,7 @@ public class ExpressionNode {
     }
     if (nodes.size() == 0) return getSubTree(true);
 
-    ExpressionNode a = null;
+    TreeNode a = null;
     try {
       a = nodes.get(rng.nextInt(nodes.size()));
     } catch (Exception e) {
@@ -186,10 +279,10 @@ public class ExpressionNode {
     return a;
   }
 
-  public ExpressionNode getSubTree(Boolean isTerminal, int treeSize) {
+  public TreeNode getSubTree(Boolean isTerminal, int treeSize) {
     if ((treeSize() == 1) && !isTerminal) return getSubTree(true, treeSize);
     int maxSize = (2 * treeSize) + 1;
-    ArrayList<ExpressionNode> nodes = new ArrayList<ExpressionNode>();
+    ArrayList<TreeNode> nodes = new ArrayList<TreeNode>();
     if (isTerminal) {
       for (int i = 0; i < assembled.size(); i++) {
         if (assembled.get(i).arity == 0) {
@@ -205,7 +298,7 @@ public class ExpressionNode {
     }
     if (nodes.size() == 0) return getSubTree(true);
 
-    ExpressionNode a = null;
+    TreeNode a = null;
     try {
       a = nodes.get(rng.nextInt(nodes.size()));
     } catch (Exception e) {
@@ -226,100 +319,5 @@ public class ExpressionNode {
       children[i].fixDepths(off);
     }
   }
-
-  static final String[][] unaryFunctions = {
-    {"Math.sin(&1)"},
-    {"Math.cos(&1)"},
-    {"Math.asin(&1)"},
-    {"Math.acos(&1)"},
-    {"Math.abs(&1)"},
-    {"-1 * &1"},
-    {"Math.toRadians(&1)"},
-    {"Math.toDegrees(&1)"}
-  };
-
-  static final String[][] binaryFunctions = {
-    {"Math.min(&1, &2)"},
-    {"Math.max(&1, &2)"},
-    {"&1 + &2"},
-    {"&1 - &2"},
-    {"&1 * &2"},
-    {"&1 / &2"}
-  };
-
-  static final String[][] ternaryFunctions = {
-    {"&1 > 0 ? &2 : &3"},
-    {"&1 < 0 ? &2 : &3"},
-    {"&1 == 0 ? &2 : &3"}
-  };
-
-  static final String[][] quaternaryFunctions = {
-    {"&1 > &2 ? &3 : &4"},
-    {"&1 < &2 ? &3 : &4"},
-    {"&1 == &2 ? &3 : &4"}
-  };
-
-  static final String[] onScannedRobotTerminals = {
-    "e.getBearing()", // in double degrees (-180 <= getBearing() < 180)
-    "e.getBearingRadians()",
-    "e.getDistance()", // in double pixels
-    "e.getEnergy()", // in double
-    "e.getHeading()", // in double degrees (0 <= getHeading() < 360)
-    "e.getHeadingRadians()",
-    "e.getVelocity()" // in double pixels/turn
-  };
-
-  static final String[] onHitByBulletTerminals = {
-    "e.getBearing()",
-    "e.getBearingRadians()",
-    "e.getHeading()",
-    "e.getHeadingRadians()",
-    "distanceToEnemy",
-    "enemyHeading"
-  };
-
-  static final String[] onHitRobotTerminals = {
-    "e.getBearing()",
-    "e.getBearingRadians()",
-    "e.getEnergy()",
-    "distanceToEnemy",
-    "enemyHeading"
-  };
-
-  static final String[] constantTerminals = {
-    "Math.PI",
-    "2 * Math.random() - 1",
-    "0.01",
-  };
-
-  static final String[] generalTerminals = {
-    "getBattleFieldHeight()", // in double pixels
-    "getBattleFieldWidth()", // in double pixels
-    "getEnergy()", // in double
-    "getGunCoolingRate()", // in double units/turn
-    "getGunHeading()", // in double degrees (0 <= getGunHeading() < 360)
-    "getHeading()", // in double degrees (0 <= getHeading() < 360)
-    "getRadarHeading()", // in double degrees (0 <= getRadarHeading() < 360)
-    "getVelocity()", // in double pixels/turn
-    "getX()", // in double pixels
-    "getY()", // in double pixels
-  };
-
-  static final String[][] terminalSet = {
-    onScannedRobotTerminals,
-    onHitByBulletTerminals,
-    onHitRobotTerminals,
-    constantTerminals,
-    generalTerminals
-  };
-
-  static final String[][][] functionTerminalSet = {
-    terminalSet,
-    unaryFunctions,
-    binaryFunctions,
-    ternaryFunctions,
-    quaternaryFunctions
-  };
-
 
 }

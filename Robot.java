@@ -8,11 +8,11 @@ public class Robot {
 
   static Random rng = new Random();
 
-  ExpressionNode[] root;
+  TreeNode[] root;
   int generation;
   String name;
   int ID;
-  ArrayList<ArrayList<ExpressionNode>> tree;
+  ArrayList<ArrayList<TreeNode>> tree;
   Robot child;
   static String pathToRobocode;
 
@@ -25,11 +25,11 @@ public class Robot {
     crossOverProb = 0.95;
 
   public Robot(int ID, int generation) {
-    root = new ExpressionNode[genFunctNum];
+    root = new TreeNode[genFunctNum];
     this.generation = generation;
     this.ID = ID;
     name = "Robot_ID_" + ID + "_Gen_" + generation;
-    tree = new ArrayList<ArrayList<ExpressionNode>>();
+    tree = new ArrayList<ArrayList<TreeNode>>();
   }
 
   public Robot(int ID, int generation, String pathToRobocode) {
@@ -47,7 +47,7 @@ public class Robot {
 
   public void initialize() {
     for (int i = 0; i < genFunctNum; i++) {
-      root[i] = new ExpressionNode(0);
+      root[i] = new TreeNode(0);
       root[i].grow(0, i % 9);
     }
   }
@@ -81,10 +81,10 @@ public class Robot {
     Boolean isTerminal1 = rng.nextDouble() < crossTermProb ? true : false;
     Boolean isTerminal2 = rng.nextDouble() < crossTermProb ? true : false;
 
-    ExpressionNode a = child.root[i].getSubTree(isTerminal1);
-    ExpressionNode b = robot.root[i].getSubTree(isTerminal2, a.treeSize());
+    TreeNode a = child.root[i].getSubTree(isTerminal1);
+    TreeNode b = robot.root[i].getSubTree(isTerminal2, a.treeSize());
 
-    ExpressionNode replacement = b.copy();
+    TreeNode replacement = b.copy();
 
     int j;
     for (j = 0; j < child.tree.get(i).size(); j++) {
@@ -118,7 +118,7 @@ public class Robot {
 
     Boolean isTerminal = rng.nextDouble() < mutateTermProb ? true : false;
 
-    ExpressionNode a = child.root[i].getSubTree(isTerminal);
+    TreeNode a = child.root[i].getSubTree(isTerminal);
 
     int j;
     for (j = 0; j < child.tree.get(i).size(); j++) {
@@ -126,7 +126,7 @@ public class Robot {
     }
 
     if (j == 0) {
-      child.root[i] = new ExpressionNode(0);
+      child.root[i] = new TreeNode(0);
       child.root[i].grow(0, i % 9);
     } else {
 
@@ -138,7 +138,7 @@ public class Robot {
 
       for (int n = 0; n < child.tree.get(i).get(j).arity; n++) {
         if (child.tree.get(i).get(j).children[n] == a) {
-          child.tree.get(i).get(j).children[n] = new ExpressionNode(child.tree.get(i).get(j).depth + 1);
+          child.tree.get(i).get(j).children[n] = new TreeNode(child.tree.get(i).get(j).depth + 1);
           child.tree.get(i).get(j).children[n].grow(child.tree.get(i).get(j).depth + 1, i % 9);
           break;
         }
