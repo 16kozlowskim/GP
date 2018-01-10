@@ -76,7 +76,7 @@ public class GeneticProgram implements Callable<Robot> {
       }
       //fitnesses = battle.fight(robotNames, genCount);
 
-      int batchNum = 25;
+      int batchNum = 10;
 
       String[][] nameBatch = new String[batchNum][popSize / batchNum];
       int n = 0;
@@ -124,9 +124,13 @@ public class GeneticProgram implements Callable<Robot> {
         }
         System.out.println(message);*/
         String[] temp = builder.toString().split(",");
+        temp[0] = temp[0].split("g")[1];
 
         for (int j = 0; j < popSize / batchNum; j++) {
-          fitnesses[j + (i * (popSize / batchNum))] = Double.parseDouble(temp[j].split("g")[1]);
+
+          System.out.println(temp[j] + " " + temp[j + (popSize/batchNum)]);
+
+          fitnesses[j + (i * (popSize / batchNum))] = Double.parseDouble(temp[j]);
           fitnesses[j + (i * (popSize / batchNum)) + popSize] = Double.parseDouble(temp[j + (popSize/batchNum)]);
         }
       }
