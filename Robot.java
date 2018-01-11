@@ -4,7 +4,7 @@ import java.io.*;
 
 public class Robot {
 
-  static final int genFunctNum = 18;
+  static int genFunctNum = 18;
 
   static Random rng = new Random();
 
@@ -15,8 +15,7 @@ public class Robot {
   ArrayList<ArrayList<TreeNode>> tree;
   Robot child;
 
-  static final double
-    crossTermProb = 0.1,
+  static double crossTermProb = 0.1,
     crossFuncProb = 0.9,
     mutateTermProb = 0.2,
     mutateFuncProb = 0.8,
@@ -94,7 +93,7 @@ public class Robot {
         if (child.tree.get(i).get(j).depth == depth - 1) break;
       }
 
-      for (int n = 0; n < child.tree.get(i).get(j).arity; n++) {
+      for (int n = 0; n < child.tree.get(i).get(j).paramNum; n++) {
         if (child.tree.get(i).get(j).children[n] == a) {
           child.tree.get(i).get(j).children[n] = replacement;
           break;
@@ -130,7 +129,7 @@ public class Robot {
         if (child.tree.get(i).get(j).depth == depth - 1) break;
       }
 
-      for (int n = 0; n < child.tree.get(i).get(j).arity; n++) {
+      for (int n = 0; n < child.tree.get(i).get(j).paramNum; n++) {
         if (child.tree.get(i).get(j).children[n] == a) {
           child.tree.get(i).get(j).children[n] = new TreeNode(child.tree.get(i).get(j).depth + 1);
           child.tree.get(i).get(j).children[n].grow(child.tree.get(i).get(j).depth + 1, i % 9);

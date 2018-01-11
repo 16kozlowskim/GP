@@ -3,7 +3,7 @@ import java.util.Random;
 
 public class TreeNode {
 
-  static final String[] unaryFunctions = {
+  static String[] unaryFunctions = {
     "Math.sin(&1)",
     "Math.cos(&1)",
     "Math.tan(&1)",
@@ -16,7 +16,7 @@ public class TreeNode {
     "Math.toDegrees(&1)"
   };
 
-  static final String[] binaryFunctions = {
+  static String[] binaryFunctions = {
     "Math.min(&1, &2)",
     "Math.max(&1, &2)",
     "&1 + &2",
@@ -25,19 +25,19 @@ public class TreeNode {
     "&1 / &2"
   };
 
-  static final String[] ternaryFunctions = {
+  static String[] ternaryFunctions = {
     "&1 > 0 ? &2 : &3",
     "&1 < 0 ? &2 : &3",
     "&1 == 0 ? &2 : &3"
   };
 
-  static final String[] quaternaryFunctions = {
+  static String[] quaternaryFunctions = {
     "&1 > &2 ? &3 : &4",
     "&1 < &2 ? &3 : &4",
     "&1 == &2 ? &3 : &4"
   };
 
-  static final String[] onScannedRobotTerminals = {
+  static String[] onScannedRobotTerminals = {
     "e.getBearingRadians()",
     "e.getDistance()", // in double pixels
     "e.getEnergy()", // in double
@@ -45,7 +45,7 @@ public class TreeNode {
     "e.getVelocity()" // in double pixels/turn
   };
 
-  static final String[] onHitByBulletTerminals = {
+  static String[] onHitByBulletTerminals = {
     "e.getBearingRadians()",
     "e.getHeadingRadians()",
     "distanceToEnemy",
@@ -53,7 +53,7 @@ public class TreeNode {
     "enemyBearingRadians"
   };
 
-  static final String[] onHitRobotTerminals = {
+  static String[] onHitRobotTerminals = {
     "e.getBearingRadians()",
     "e.getEnergy()",
     "distanceToEnemy",
@@ -61,13 +61,13 @@ public class TreeNode {
     "enemyBearingRadians"
   };
 
-  static final String[] constantTerminals = {
+  static String[] constantTerminals = {
     "Math.PI",
     "2 * Math.random() - 1",
     "0.01"
   };
 
-  static final String[] generalTerminals = {
+  static String[] generalTerminals = {
     "getEnergy()", // in double
     "getGunHeading()", // in double degrees (0 <= getGunHeading() < 360)
     "getHeading()", // in double degrees (0 <= getHeading() < 360)
@@ -77,7 +77,7 @@ public class TreeNode {
     "getY()" // in double pixels
   };
 
-  static final String[][] terminalSet = {
+  static String[][] terminalSet = {
     onScannedRobotTerminals,
     onHitByBulletTerminals,
     onHitRobotTerminals,
@@ -85,67 +85,67 @@ public class TreeNode {
     generalTerminals
   };
 
-  static final String[][] functionSet = {
+  static String[][] functionSet = {
     unaryFunctions,
     binaryFunctions,
     ternaryFunctions,
     quaternaryFunctions
   };
 
-  static final double scanRobotTermProb = 0.5,
+  static double scanRobotTermProb = 0.5,
     constTermProb = 0.05,
     genTermProb = 0.5;
 
-  static final double[] termProb = {
+  static double[] termProb = {
       scanRobotTermProb,
       constTermProb,
       genTermProb
     };
 
-  static final double hitByBulletTermProb = 0.4,
+  static double hitByBulletTermProb = 0.4,
     constTermProb2 = 0.05,
     genTermProb2 = 0.55;
 
-  static final double[] termProb2 = {
+  static double[] termProb2 = {
       hitByBulletTermProb,
       constTermProb2,
       genTermProb2
     };
 
-  static final double hitRobotTermProb = 0.35,
+  static double hitRobotTermProb = 0.35,
     constTermProb3 = 0.05,
     genTermProb3 = 0.60;
 
-  static final double[] termProb3 = {
+  static double[] termProb3 = {
       hitRobotTermProb,
       constTermProb3,
       genTermProb3
     };
 
-  static final double eventTermProb[][] = {
+  static double eventTermProb[][] = {
       termProb,
       termProb2,
       termProb3
     };
 
-  static final double unaryFuncProb = 0.2,
+  static double unaryFuncProb = 0.2,
     binaryFuncProb = 0.5,
     ternaryFuncProb = 0.1,
     quaternaryFuncProb = 0.2;
 
-  static final double[] funcProb = {
+  static double[] funcProb = {
       unaryFuncProb,
       binaryFuncProb,
       ternaryFuncProb,
       quaternaryFuncProb
     };
 
-  static final double terminalProb = 0.3,
+  static double terminalProb = 0.3,
     functionProb = 0.7;
 
-  int depth, arity;
-  static final int maxDepth = 5;
-  static final int minDepth = 2;
+  int depth, paramNum;
+  static int maxDepth = 5;
+  static int minDepth = 2;
 
   static Random rng = new Random();
 
@@ -186,18 +186,18 @@ public class TreeNode {
       for (int i = 0; i < funcProb.length; i++) {
         randno -= funcProb[i];
         if (randno < 0) {
-          arity = i + 1;
+          paramNum = i + 1;
           break;
         }
       }
     } else {
-        arity = 0;
+        paramNum = 0;
     }
-    children = new TreeNode[arity];
+    children = new TreeNode[paramNum];
 
     randno = rng.nextDouble();
 
-    if (arity == 0) {
+    if (paramNum == 0) {
       for (int i = 0; i < termProb.length; i++) {
         randno -= eventTermProb[index][i];
         if (randno < 0) {
@@ -208,8 +208,8 @@ public class TreeNode {
         }
       }
     } else {
-      expression = functionSet[arity - 1][rng.nextInt(functionSet[arity - 1].length)];
-      for (int i = 0; i < arity; i++) {
+      expression = functionSet[paramNum - 1][rng.nextInt(functionSet[paramNum - 1].length)];
+      for (int i = 0; i < paramNum; i++) {
         children[i] = new TreeNode(depth + 1);
         children[i].grow(off, val);
       }
@@ -219,7 +219,7 @@ public class TreeNode {
   public ArrayList<TreeNode> assembleList(TreeNode node) {
     assembled = new ArrayList<TreeNode>();
     assembled.add(node);
-    for (int i = 0; i < arity; i++) {
+    for (int i = 0; i < paramNum; i++) {
       assembled.addAll(children[i].assembleList(children[i]));
     }
     return assembled;
@@ -228,19 +228,18 @@ public class TreeNode {
   public String assembleExpression() {
     String composed = expression;
 
-    for (int i = 0; i < arity; i++) {
+    for (int i = 0; i < paramNum; i++) {
       composed = "(" + composed.replaceFirst("&"+(i+1), children[i].assembleExpression()) + ")";
     }
-
     return composed;
   }
 
   public TreeNode copy() {
     TreeNode copy = new TreeNode(depth);
-    copy.arity = arity;
-    copy.children = new TreeNode[arity];
+    copy.paramNum = paramNum;
+    copy.children = new TreeNode[paramNum];
     copy.expression = expression;
-    for (int i = 0; i < arity; i++) {
+    for (int i = 0; i < paramNum; i++) {
       copy.children[i] = children[i].copy();
     }
     return copy;
@@ -251,13 +250,13 @@ public class TreeNode {
     ArrayList<TreeNode> nodes = new ArrayList<TreeNode>();
     if (isTerminal) {
       for (int i = 0; i < assembled.size(); i++) {
-        if (assembled.get(i).arity == 0) {
+        if (assembled.get(i).paramNum == 0) {
           nodes.add(assembled.get(i));
         }
       }
     } else {
       for (int i = 0; i < assembled.size(); i++) {
-        if (assembled.get(i).arity > 0) {
+        if (assembled.get(i).paramNum > 0) {
           nodes.add(assembled.get(i));
         }
       }
@@ -279,13 +278,13 @@ public class TreeNode {
     ArrayList<TreeNode> nodes = new ArrayList<TreeNode>();
     if (isTerminal) {
       for (int i = 0; i < assembled.size(); i++) {
-        if (assembled.get(i).arity == 0) {
+        if (assembled.get(i).paramNum == 0) {
           nodes.add(assembled.get(i));
         }
       }
     } else {
       for (int i = 0; i < assembled.size(); i++) {
-        if ((assembled.get(i).arity > 0) && (assembled.get(i).treeSize() <= maxSize)) {
+        if ((assembled.get(i).paramNum > 0) && (assembled.get(i).treeSize() <= maxSize)) {
           nodes.add(assembled.get(i));
         }
       }
@@ -309,7 +308,7 @@ public class TreeNode {
 
   public void fixDepths(int off) {
     depth += off;
-    for (int i = 0; i < arity; i++) {
+    for (int i = 0; i < paramNum; i++) {
       children[i].fixDepths(off);
     }
   }

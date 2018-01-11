@@ -127,21 +127,22 @@ public class GeneticProgram implements Callable<Robot> {
       for (int i = 0; i < processNum; i++) {
         //process[i].waitFor();
         BufferedReader reader = new BufferedReader(new InputStreamReader(process[i].getInputStream()));
-        //BufferedReader reader2 = new BufferedReader(new InputStreamReader(process[i].getInputStream()));
+        //BufferedReader reader2 = new BufferedReader(new InputStreamReader(process[i].getErrorStream()));
         StringBuilder builder = new StringBuilder();
         String line = null;
-        //String message = null;
+        //String error = null;
         while ((line = reader.readLine()) != null) {
           builder.append(line);
         }
-        /*while ((message = reader2.readLine()) != null) {
-          builder.append(message);
+        /*while ((error = reader2.readLine()) != null) {
+          builder.append(error);
         }
-        System.out.println(message);*/
+        System.out.println(error);
+        */
         String[] temp = builder.toString().split(",");
-        //System.out.println(temp[0]);
+        //System.out.println(temp[0] + "," + temp[1]);
 
-        temp[0] = temp[0].split("repository")[1];
+        //temp[0] = temp[0].split("repository")[1];
 
         for (int j = 0; j < popSize / processNum; j++) {
 

@@ -28,8 +28,8 @@ public class BattleRunner {
   }
 
   public BattleRunner(String pathToRobocode) {
+      RobocodeEngine.setLogMessagesEnabled(false);
       engine = new RobocodeEngine(new java.io.File(pathToRobocode));
-      //engine.setLogMessagesEnabled(false);
       battleObserver = new BattleObserver();
       engine.addBattleListener(battleObserver);
       engine.setVisible(false);
@@ -47,18 +47,20 @@ public class BattleRunner {
       "sample.Corners"
     };
 
-    //if (generation > 0) {
-      //opponents[0] = "supersample.SuperCrazy*";
-      //opponents[1] = "supersample.SuperMercutio 1.0";
-      //opponents[2] = "jk.mega.DrussGT 3.1.4159";
-    //}
+    if (generation > 10) {
+      opponents[0] = "supersample.SuperCrazy*";
+      opponents[1] = "supersample.SuperMercutio 1.0";
+      opponents[2] = "supersample.SuperWalls 1.0";
+      opponents[4] = "supersample.SuperSpinBot 1.0";
+      opponents[5] = "jk.mega.DrussGT 3.1.4159";
+    }
 
     BattleResults[] results;
     double[] fitness = new double[robots.length * 2];
 
     for (int i = 0; i < robots.length; i++) {
 
-      //System.out.println(robots[i] + " is testing its mettle.");
+      //System.err.println(robots[i] + " is testing its mettle.");
 
       double robotScore = 0;
       double opponentScore = 0;
@@ -70,21 +72,21 @@ public class BattleRunner {
         battleSpec = new BattleSpecification(5, battlefield, selectedRobots);
         engine.runBattle(battleSpec, true);
 
-        results = battleObserver.getResult();
+        results = battleObserver.result;
 
-        if (results[0].getTeamLeaderName().equals(robots[i])) {
-          robotScore += results[0].getScore();
-          opponentScore += results[1].getScore();
-        } else {
-          robotScore += results[1].getScore();
-          opponentScore += results[0].getScore();
+        for (int k = 0; k < selectedRobots.length; k++) {
+          if (results[k].getTeamLeaderName().equals(robots[i])) {
+            robotScore += results[k].getScore();
+          } else {
+            opponentScore += results[k].getScore();
+          }
         }
       }
       RobotSpecification[] selectedRobots = engine.getLocalRepository(robots[i] + ", " + opponents[0] + ", " + opponents[1] + ", " + opponents[2]);
       battleSpec = new BattleSpecification(5 * opponents.length, battlefield, selectedRobots);
       engine.runBattle(battleSpec, true);
 
-      results = battleObserver.getResult();
+      results = battleObserver.result;
 
       for (int j = 0; j < selectedRobots.length; j++) {
         if (results[j].getTeamLeaderName().equals(robots[i])) {
@@ -103,14 +105,13 @@ public class BattleRunner {
 
 class BattleObserver extends BattleAdaptor {
 
-  private robocode.BattleResults[] result;
-
-  public BattleResults[] getResult() {
-    return result;
-  }
+  robocode.BattleResults[] result;
 
   public void onBattleCompleted(BattleCompletedEvent e) {
     result = e.getIndexedResults();
+  }
+  public void onBattleError(BattleErrorEvent e) {
+    System.out.println("Err> " + e.getError());
   }
 
 }
