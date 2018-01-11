@@ -6,8 +6,10 @@ public class TreeNode {
   static final String[] unaryFunctions = {
     "Math.sin(&1)",
     "Math.cos(&1)",
+    "Math.tan(&1)",
     "Math.asin(&1)",
     "Math.acos(&1)",
+    "Math.atan(&1)",
     "Math.abs(&1)",
     "-1 * &1",
     "Math.toRadians(&1)",
@@ -227,10 +229,8 @@ public class TreeNode {
     String composed = expression;
 
     for (int i = 0; i < arity; i++) {
-      composed = composed.replaceFirst("&"+(i+1), children[i].assembleExpression());
+      composed = "(" + composed.replaceFirst("&"+(i+1), children[i].assembleExpression()) + ")";
     }
-
-    composed = "("+composed+")";
 
     return composed;
   }

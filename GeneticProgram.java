@@ -26,7 +26,7 @@ public class GeneticProgram implements Callable<Robot> {
     child = new Robot[popSize];
 
     for (int i = 0; i < popSize; i++) {
-      parent[i] = new Robot(i + 1, 1, pathToRobocode);
+      parent[i] = new Robot(i + 1, 1);
       parent[i].initialize();
     }
   }
@@ -140,6 +140,7 @@ public class GeneticProgram implements Callable<Robot> {
         System.out.println(message);*/
         String[] temp = builder.toString().split(",");
         //System.out.println(temp[0]);
+
         temp[0] = temp[0].split("repository")[1];
 
         for (int j = 0; j < popSize / processNum; j++) {

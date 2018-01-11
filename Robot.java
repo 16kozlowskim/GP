@@ -14,7 +14,6 @@ public class Robot {
   int ID;
   ArrayList<ArrayList<TreeNode>> tree;
   Robot child;
-  static String pathToRobocode;
 
   static final double
     crossTermProb = 0.1,
@@ -30,11 +29,6 @@ public class Robot {
     this.ID = ID;
     name = "Robot_ID_" + ID + "_Gen_" + generation;
     tree = new ArrayList<ArrayList<TreeNode>>();
-  }
-
-  public Robot(int ID, int generation, String pathToRobocode) {
-    this(ID, generation);
-    this.pathToRobocode = pathToRobocode;
   }
 
   public Robot clone(int ID, int genIncrement) {

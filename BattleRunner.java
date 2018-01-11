@@ -18,6 +18,7 @@ public class BattleRunner {
     }
 
     BattleRunner battle = new BattleRunner(args[0]);
+
     double[] results = battle.fight(robots, Integer.parseInt(args[1]));
 
     for (int i = 0; i < results.length; i++) {
@@ -28,7 +29,7 @@ public class BattleRunner {
 
   public BattleRunner(String pathToRobocode) {
       engine = new RobocodeEngine(new java.io.File(pathToRobocode));
-      RobocodeEngine.setLogMessagesEnabled(false);
+      //engine.setLogMessagesEnabled(false);
       battleObserver = new BattleObserver();
       engine.addBattleListener(battleObserver);
       engine.setVisible(false);
@@ -46,11 +47,11 @@ public class BattleRunner {
       "sample.Corners"
     };
 
-    if (generation > 15) {
-      opponents[0] = "supersample.SuperCrazy*";
-      opponents[1] = "supersample.SuperMercutio 1.0";
-      opponents[2] = "jk.mega.DrussGT 3.1.4159";
-    }
+    //if (generation > 0) {
+      //opponents[0] = "supersample.SuperCrazy*";
+      //opponents[1] = "supersample.SuperMercutio 1.0";
+      //opponents[2] = "jk.mega.DrussGT 3.1.4159";
+    //}
 
     BattleResults[] results;
     double[] fitness = new double[robots.length * 2];
@@ -111,5 +112,5 @@ class BattleObserver extends BattleAdaptor {
   public void onBattleCompleted(BattleCompletedEvent e) {
     result = e.getIndexedResults();
   }
-  
+
 }
