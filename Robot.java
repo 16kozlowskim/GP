@@ -157,18 +157,29 @@ public class Robot {
       "\npublic class " + name + " extends Robot {" +
       "\n" +
       "\n  private double distanceToEnemy;" +
-      "\n  private double enemyHeading;" +
+      "\n  private double enemyBearingRadians;" +
+      "\n  private double enemyHeadingRadians;" +
+      "\n  private boolean state = true;" +
       "\n" +
       "\n  public void run() {" +
       "\n    while(true) {" +
-      "\n      turnGunLeft(Double.POSITIVE_INFINITY);" +
+      "\n      if (state) {" +
+      "\n        state = !state;" +
+      "\n        turnGunLeft(Double.POSITIVE_INFINITY);" +
+      "\n      }" +
+      "\n      else {" +
+      "\n        state = !state;" +
+      "\n        turnGunRight(Double.POSITIVE_INFINITY);" +
+      "\n      }" +
       "\n    }" +
       "\n  }" +
       "\n" +
       "\n  public void onScannedRobot(ScannedRobotEvent e) {" +
       "\n" +
+      "\n    state = !state;" +
       "\n    distanceToEnemy = e.getDistance();" +
-      "\n    enemyHeading = e.getHeading();" +
+      "\n    enemyHeadingRadians = e.getHeadingRadians();" +
+      "\n    enemyBearingRadians = e.getBearingRadians();" +
       "\n" +
       "\n    if (getOthers() == 1) {" +
       "\n      turnGunLeft(" + geneticSource[0] + ");" +

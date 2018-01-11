@@ -36,49 +36,43 @@ public class TreeNode {
   };
 
   static final String[] onScannedRobotTerminals = {
-    "e.getBearing()", // in double degrees (-180 <= getBearing() < 180)
     "e.getBearingRadians()",
     "e.getDistance()", // in double pixels
     "e.getEnergy()", // in double
-    "e.getHeading()", // in double degrees (0 <= getHeading() < 360)
     "e.getHeadingRadians()",
     "e.getVelocity()" // in double pixels/turn
   };
 
   static final String[] onHitByBulletTerminals = {
-    "e.getBearing()",
     "e.getBearingRadians()",
-    "e.getHeading()",
     "e.getHeadingRadians()",
     "distanceToEnemy",
-    "enemyHeading"
+    "enemyHeadingRadians",
+    "enemyBearingRadians"
   };
 
   static final String[] onHitRobotTerminals = {
-    "e.getBearing()",
     "e.getBearingRadians()",
     "e.getEnergy()",
     "distanceToEnemy",
-    "enemyHeading"
+    "enemyHeadingRadians",
+    "enemyBearingRadians"
   };
 
   static final String[] constantTerminals = {
     "Math.PI",
     "2 * Math.random() - 1",
-    "0.01",
+    "0.01"
   };
 
   static final String[] generalTerminals = {
-    "getBattleFieldHeight()", // in double pixels
-    "getBattleFieldWidth()", // in double pixels
     "getEnergy()", // in double
-    "getGunCoolingRate()", // in double units/turn
     "getGunHeading()", // in double degrees (0 <= getGunHeading() < 360)
     "getHeading()", // in double degrees (0 <= getHeading() < 360)
     "getRadarHeading()", // in double degrees (0 <= getRadarHeading() < 360)
     "getVelocity()", // in double pixels/turn
     "getX()", // in double pixels
-    "getY()", // in double pixels
+    "getY()" // in double pixels
   };
 
   static final String[][] terminalSet = {
@@ -106,9 +100,9 @@ public class TreeNode {
       genTermProb
     };
 
-  static final double hitByBulletTermProb = 0.25,
-    constTermProb2 = 0.1,
-    genTermProb2 = 0.65;
+  static final double hitByBulletTermProb = 0.4,
+    constTermProb2 = 0.05,
+    genTermProb2 = 0.55;
 
   static final double[] termProb2 = {
       hitByBulletTermProb,
@@ -116,9 +110,9 @@ public class TreeNode {
       genTermProb2
     };
 
-  static final double hitRobotTermProb = 0.25,
-    constTermProb3 = 0.1,
-    genTermProb3 = 0.65;
+  static final double hitRobotTermProb = 0.35,
+    constTermProb3 = 0.05,
+    genTermProb3 = 0.60;
 
   static final double[] termProb3 = {
       hitRobotTermProb,
