@@ -128,8 +128,8 @@ public class TreeNode {
       termProb3
     };
 
-  static double unaryFuncProb = 0.2,
-    binaryFuncProb = 0.5,
+  static double unaryFuncProb = 0.3,
+    binaryFuncProb = 0.4,
     ternaryFuncProb = 0.1,
     quaternaryFuncProb = 0.2;
 
