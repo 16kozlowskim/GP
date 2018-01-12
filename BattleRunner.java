@@ -47,7 +47,7 @@ public class BattleRunner {
       "sample.Corners"
     };
 
-    if (generation > 10) {
+    if (generation > 20) {
       opponents[0] = "supersample.SuperCrazy*";
       opponents[1] = "supersample.SuperMercutio 1.0";
       opponents[2] = "supersample.SuperWalls 1.0";
@@ -69,7 +69,7 @@ public class BattleRunner {
 
       for (int j = 0; j < opponents.length; j++) {
         RobotSpecification[] selectedRobots = engine.getLocalRepository(opponents[j] + ", " + robots[i]);
-        battleSpec = new BattleSpecification(5, battlefield, selectedRobots);
+        battleSpec = new BattleSpecification(10, battlefield, selectedRobots);
         engine.runBattle(battleSpec, true);
 
         results = battleObserver.result;
@@ -83,7 +83,7 @@ public class BattleRunner {
         }
       }
       RobotSpecification[] selectedRobots = engine.getLocalRepository(robots[i] + ", " + opponents[0] + ", " + opponents[1] + ", " + opponents[2]);
-      battleSpec = new BattleSpecification(5 * opponents.length, battlefield, selectedRobots);
+      battleSpec = new BattleSpecification(10 * opponents.length, battlefield, selectedRobots);
       engine.runBattle(battleSpec, true);
 
       results = battleObserver.result;

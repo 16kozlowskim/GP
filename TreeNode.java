@@ -3,6 +3,9 @@ import java.util.Random;
 
 public class TreeNode {
 
+  static Random rng = new Random();
+  final static String ephemeralRandomConstant = Double.toString(2 * rng.nextDouble() - 1);
+
   static String[] unaryFunctions = {
     "Math.sin(&1)",
     "Math.cos(&1)",
@@ -64,7 +67,8 @@ public class TreeNode {
   static String[] constantTerminals = {
     "Math.PI",
     "2 * Math.random() - 1",
-    "0.01"
+    "0.01",
+    ephemeralRandomConstant
   };
 
   static String[] generalTerminals = {
@@ -97,36 +101,36 @@ public class TreeNode {
     genTermProb = 0.5;
 
   static double[] termProb = {
-      scanRobotTermProb,
-      constTermProb,
-      genTermProb
-    };
+    scanRobotTermProb,
+    constTermProb,
+    genTermProb
+  };
 
   static double hitByBulletTermProb = 0.4,
     constTermProb2 = 0.05,
     genTermProb2 = 0.55;
 
   static double[] termProb2 = {
-      hitByBulletTermProb,
-      constTermProb2,
-      genTermProb2
-    };
+    hitByBulletTermProb,
+    constTermProb2,
+    genTermProb2
+  };
 
   static double hitRobotTermProb = 0.35,
     constTermProb3 = 0.05,
     genTermProb3 = 0.60;
 
   static double[] termProb3 = {
-      hitRobotTermProb,
-      constTermProb3,
-      genTermProb3
-    };
+    hitRobotTermProb,
+    constTermProb3,
+    genTermProb3
+  };
 
   static double eventTermProb[][] = {
-      termProb,
-      termProb2,
-      termProb3
-    };
+    termProb,
+    termProb2,
+    termProb3
+  };
 
   static double unaryFuncProb = 0.3,
     binaryFuncProb = 0.4,
@@ -134,11 +138,11 @@ public class TreeNode {
     quaternaryFuncProb = 0.2;
 
   static double[] funcProb = {
-      unaryFuncProb,
-      binaryFuncProb,
-      ternaryFuncProb,
-      quaternaryFuncProb
-    };
+    unaryFuncProb,
+    binaryFuncProb,
+    ternaryFuncProb,
+    quaternaryFuncProb
+  };
 
   static double terminalProb = 0.3,
     functionProb = 0.7;
@@ -146,8 +150,6 @@ public class TreeNode {
   int depth, paramNum;
   static int maxDepth = 5;
   static int minDepth = 2;
-
-  static Random rng = new Random();
 
   ArrayList<TreeNode> assembled;
 
@@ -160,6 +162,7 @@ public class TreeNode {
 
   public void grow(int off, int val) {
 
+    double sum;
     double randno;
     int index = -1;
 
@@ -181,11 +184,12 @@ public class TreeNode {
     }
 
     randno = rng.nextDouble();
+    sum = 0;
 
     if (((minDepth + off) > depth) || ((rng.nextDouble() < functionProb) && (depth < (maxDepth + off)))) {
       for (int i = 0; i < funcProb.length; i++) {
-        randno -= funcProb[i];
-        if (randno < 0) {
+        sum += funcProb[i];
+        if (sum > randno) {
           paramNum = i + 1;
           break;
         }
@@ -196,11 +200,12 @@ public class TreeNode {
     children = new TreeNode[paramNum];
 
     randno = rng.nextDouble();
+    sum = 0;
 
     if (paramNum == 0) {
       for (int i = 0; i < termProb.length; i++) {
-        randno -= eventTermProb[index][i];
-        if (randno < 0) {
+        sum += eventTermProb[index][i];
+        if (sum > randno) {
           if (i == 0) i = index;
           else i += 2;
           expression = terminalSet[i][rng.nextInt(terminalSet[i].length)];
@@ -226,12 +231,12 @@ public class TreeNode {
   }
 
   public String assembleExpression() {
-    String composed = expression;
+    String assembled = expression;
 
     for (int i = 0; i < paramNum; i++) {
-      composed = "(" + composed.replaceFirst("&"+(i+1), children[i].assembleExpression()) + ")";
+      assembled = "(" + assembled.replaceFirst("&"+(i+1), children[i].assembleExpression()) + ")";
     }
-    return composed;
+    return assembled;
   }
 
   public TreeNode copy() {

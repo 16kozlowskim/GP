@@ -157,10 +157,10 @@ public class Robot {
       "\n  public void run() {" +
       "\n    while(true) {" +
       "\n      if (state) {" +
-      "\n        turnGunLeft(Double.POSITIVE_INFINITY);" +
+      "\n        turnGunLeft(360);" +
       "\n      }" +
       "\n      else {" +
-      "\n        turnGunRight(Double.POSITIVE_INFINITY);" +
+      "\n        turnGunRight(360);" +
       "\n      }" +
       "\n    }" +
       "\n  }" +
